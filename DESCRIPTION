@@ -1,0 +1,11 @@
+Package: vmsR
+Type: Package
+Title: For analysing VMS data
+Version: 0.1.0
+Author: Pablo Marin <pablo.marin.abanto@gmail.com>, Rocío Joo <pablo.marin.abanto@gmail.com>
+Maintainer: Pablo Marin <pablo.marin.abanto@gmail.com>
+Description: The package processes and analyzes vms data. Performs the following functions:Identify fishing trips, Identify the positions of fishing sets, generates measures of fishing effort (duration of trip, route, ...), linking to observer data and catch daily. 
+License: GPL (>= 2)
+Encoding: UTF-8
+LazyData: true
+LazyLoad: Yes
