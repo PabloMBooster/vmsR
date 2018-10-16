@@ -20,7 +20,7 @@ data raw of the vessel monitoring system
 Identifier of the vessel and must be in character format
 }
   \item{harbor}{
-The file with the coordinates of the harbor
+Data about the coordinates of the harbor
 }
 }
 
@@ -53,5 +53,4 @@ The file with the coordinates of the harbor
 
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{ ~kwd1 }% use one of  RShowDoc("KEYWORDS")
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+}

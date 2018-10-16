@@ -33,3 +33,6 @@ processing_vms <- function(data, vessel = "num_vessel", harbor){
   id_vessel <- id_vessel %>% lapply(as.data.frame) %>% bind_rows()
   return(id_vessel)
 }
+
+
+
