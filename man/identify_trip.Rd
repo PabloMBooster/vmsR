@@ -30,7 +30,7 @@ maximum speed that a trip can reach during the fishing trip.
   \item{hmax}{
 maximum hours that two vms records can contain}
   \item{dmin}{
-%%     ~~Describe \code{dmin} here~~
+minimum distance where a vessel is operating
 }
   \item{see}{
 %%     ~~Describe \code{see} here~~
