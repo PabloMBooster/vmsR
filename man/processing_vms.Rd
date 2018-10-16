@@ -51,6 +51,8 @@ Data about the coordinates of the harbor
 }
 \examples{
 
+data(harbor)
+
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
 }
