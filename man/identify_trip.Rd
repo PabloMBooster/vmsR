@@ -5,7 +5,8 @@
 Identify fishing trips
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+
+identifies departure and arrival when the ship is less than 2 nautical miles from the port and a speed less than 2 knots. In addition, the time between departure and arrival must last at least 6 hours.
 }
 \usage{
 identify_trip(data = data, dharbor = 2, vharbor = 5, rmin = 4, vmax = 20, hmax = 2.3, dmin = 5, see = FALSE)
