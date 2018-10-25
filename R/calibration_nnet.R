@@ -572,5 +572,6 @@ calibration_nnet <- function(data, directory, neurons, nb_loop=50, thres_min=0.4
   cat("\n")
   cat("Umbral:", thres)
   sink()
+
   return(output)
 }
