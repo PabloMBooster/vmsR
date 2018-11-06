@@ -442,7 +442,7 @@ calibration_nnet <- function(data, directory, neurons, nb_loop=50, thres_min=0.4
   desv_test <- apply(test_perf,1,sd,na.rm=TRUE)
   desv_comp <- apply(comparacion,1,sd,na.rm=TRUE)
   # como todas son medias, (incluyendo la del promedio, sacamos intervalo de confianza de media)
-  error_test <- qt(0.975,df=nb.loop-1)*desv_test/sqrt(nb_loop)
+  error_test <- qt(0.975,df=nb_loop-1)*desv_test/sqrt(nb_loop)
   left_test  <- prom_test - error_test
   right_test <- prom_test + error_test
   error_train<- qt(0.975,df=nb_loop-1)*desv_train/sqrt(nb_loop)
