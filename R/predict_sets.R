@@ -1,6 +1,7 @@
 predict_sets <- function(data = data, thres = 0.51, neurons = 4, loops = 10){
 
   require(nnet)
+
   data$date <- as.POSIXct(strptime(as.character(data$Fecha_Matlab), format = "%Y-%m-%d %H:%M"))
   data$date_GMT <- as.POSIXct(data$date,tz='GMT')
   data$Cod_Barco <- as.factor(data$Cod_Barco)
@@ -43,6 +44,8 @@ predict_sets <- function(data = data, thres = 0.51, neurons = 4, loops = 10){
   ind_change_speed_1 <- which(is.na(data[,variables[3]]))
   ind_change_speed_2 <- which(is.na(data[,variables[4]]))
 
+  data0 <- data
+  data0$Cala <- 0
   data <- data[-c(ind_change_speed_1,ind_change_speed_2),]
 
   data_scaled <- scale(data[,variables],center=TRUE,scale=TRUE)
@@ -51,8 +54,6 @@ predict_sets <- function(data = data, thres = 0.51, neurons = 4, loops = 10){
                    "Lon_Obs_Ini_Cala","Lat_Obs_Ini_Cala","Cala","Primera_Cala","Dist_Cala_Emis","Cod_Viaje_VMS",
                    "Cod_Viaje_Cruz","Flota","Pesca_Viaje","date","date_GMT")
   data_scaled <- cbind(data[,covariables],data_scaled)
-  ############
-
 
   predichas <- matrix(NA,nrow=dim(data_scaled)[1],ncol=loops)
   for (ii in 1:loops){
@@ -62,9 +63,10 @@ predict_sets <- function(data = data, thres = 0.51, neurons = 4, loops = 10){
     predichas[,ii] <- predicted[,2]
 
   }
-  prediccion <- as.numeric(apply(predichas,1,mean) > thres)
-  data$Calas <- prediccion
-  #data$Calas[data_2$N] <- prediccion
+  sets <- as.numeric(apply(predichas,1,mean) > thres)
 
-  return(data)
+  data0$Cala[-c(ind_change_speed_1,ind_change_speed_2)] <- sets
+  predict_sets <- data0$Cala
+
+  return(predict_sets)
 }
