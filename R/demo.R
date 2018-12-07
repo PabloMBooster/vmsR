@@ -35,4 +35,4 @@ data_vms <- data
 save(data_vms, file = "C:/pablo/D/github/vmsR/data/data_vms.RData")
 
 
-#nnet_out <- calibration_nnet(data = data, directory = getwd(), neurons=4, MSE_max=0.04, nb_loop = 10)
+nnet_out <- calibration_nnet(data = data, directory = getwd(), neurons=4, MSE_max=0.04, nb_loop = 10)
