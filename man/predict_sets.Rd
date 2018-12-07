@@ -2,9 +2,9 @@
 \alias{predict_sets}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Predict sets}
+Predict fishing sets}
 \description{
-Predict sets
+Predict fishing sets
 }
 \usage{
 predict_sets(data = data, thres = 0.51, neurons = 4, loops = 10)

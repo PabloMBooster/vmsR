@@ -1,8 +1,12 @@
-calibration_nnet <- function(data, directory, neurons, nb_loop=50, thres_min=0.4, # dossier.0, directorio,
+calibration_nnet <- function(data, directory, neurons = 4, nb_loop=50, thres_min=0.4, # dossier.0, directorio,
                              thres_max=0.6, MSE_max=0.04, prop_train=0.75, T1=180, T2=360){
 
+  subDir <- "Result_nnet"
+  dir.create(file.path(directory, subDir), showWarnings = FALSE)
+  input_dir <- paste0(directory,"/",subDir,"/")
+
   # 1. Nombre del barco
-  # 2. Codigo del barco
+  # 2. CÃ³digo del barco
   # 3. Fecha emisiÃ³n VMS en formato Matlab
   # 4. Clase de emisiÃ³n
   # 5. Longitud VMS
@@ -26,20 +30,17 @@ calibration_nnet <- function(data, directory, neurons, nb_loop=50, thres_min=0.4
   # 23. Clase de flota
   # 24. Pesca real (1 si hubo pesca en ese viaje, segÃºn bitacorero, 0 si no hubo)
 
-  #source(paste0(dossier.0,"/",'matlab_time.R'))
-  #data$date <- matlab2POS(data$Fecha.Matlab)
-
-  data$date <- as.POSIXct(strptime(as.character(data$Fecha_Matlab), format = "%Y-%m-%d %H:%M"))
-  data$date_GMT <- as.POSIXct(data$date,tz='GMT')
+  data$date      <- as.POSIXct(strptime(as.character(data$Fecha_Matlab), format = "%Y-%m-%d %H:%M"))
+  data$date_GMT  <- as.POSIXct(data$date,tz='GMT')
   data$Cod_Barco <- as.factor(data$Cod_Barco)
-  data$Clase_Emision <- as.factor(data$Clase_Emision)
-  data$Zona <- as.factor(data$Zona)
+  data$Clase_Emision  <- as.factor(data$Clase_Emision)
+  data$Zona           <- as.factor(data$Zona)
   data$Puerto_0_Mar_1 <- as.factor(data$Puerto_0_Mar_1)
-  data$Cala <- as.factor(data$Cala)
-  data$Primera_Cala <- as.factor(data$Primera_Cala)
-  data$Cod_Viaje_VMS <- as.factor(data$Cod_Viaje_VMS)
+  data$Cala           <- as.factor(data$Cala)
+  data$Primera_Cala   <- as.factor(data$Primera_Cala)
+  data$Cod_Viaje_VMS  <- as.factor(data$Cod_Viaje_VMS)
   data$Cod_Viaje_Cruz <- as.factor(data$Cod_Viaje_Cruz)
-  data$Flota <- as.factor(data$Flota)
+  data$Flota       <- as.factor(data$Flota)
   data$Pesca_Viaje <- as.factor(data$Pesca_Viaje)
 
   ## partimos del supuesto de que todos los viajes son de anchoveta y tienen mÃ¡ximo 2 horas entre emisiones consecutivas
@@ -71,11 +72,12 @@ calibration_nnet <- function(data, directory, neurons, nb_loop=50, thres_min=0.4
 
   for (i in seq_along(cod_viajes)){
     lignes <- which(data$Cod_Viaje_VMS == cod_viajes[i])
+
     data$Change_Speed_1[lignes] <- c(NA,diff(data$Vel_Cal[lignes]))
     data$Change_Speed_2[lignes] <- c(diff(data$Vel_Cal[lignes]),NA)
     Dif_T_3 <- c(NA,data$Dif_Tiempo[lignes]) + c(data$Dif_Tiempo[lignes],NA)
     data$Acel_1[lignes] <- data$Change_Speed_1[lignes]/Dif_T_3[1:(length(Dif_T_3)-1)]
-    data$Acel_2[lignes] <-  c(data$Acel_1[lignes[-1]],NA) #c(data$Acel.1[lignes[2:length(lignes)]],NA)
+    data$Acel_2[lignes] <-  c(data$Acel_1[lignes[-1]],NA)
     data$Cambio_Rumbo_Tiempo[lignes] <- data$cambio_rumbo_transf[lignes]/Dif_T_3[1:(length(Dif_T_3)-1)]
   }
 
@@ -85,14 +87,14 @@ calibration_nnet <- function(data, directory, neurons, nb_loop=50, thres_min=0.4
   ind_change_speed_1 <- which(is.na(data[,variables[3]]))
   ind_change_speed_2 <- which(is.na(data[,variables[4]]))
 
-  data <- data[-c(ind_change_speed_1,ind_change_speed_2),]
 
+  data <- data[-c(ind_change_speed_1,ind_change_speed_2),]
   data_scaled <- scale(data[,variables],center=TRUE,scale=TRUE)
+
 
   covariables <- c("Nombre_Barco","Cod_Barco","Lon","Lat","Puerto_0_Mar_1","Dist_Puerto","Dif_Tiempo",
                    "Lon_Obs_Ini_Cala","Lat_Obs_Ini_Cala","Cala","Primera_Cala","Dist_Cala_Emis","Cod_Viaje_VMS",
                    "Cod_Viaje_Cruz","Flota","Pesca_Viaje","date","date_GMT")
-
   data_scaled <- cbind(data[,covariables],data_scaled)
 
   N = log(1-0.95)/log(1-0.1)
@@ -108,9 +110,17 @@ calibration_nnet <- function(data, directory, neurons, nb_loop=50, thres_min=0.4
   train_perf <- matrix(NA,nrow=11,ncol=nb_loop)
   test_perf <- matrix(NA,nrow=14,ncol=nb_loop)
   comparacion <- matrix(NA,nrow=6,ncol=nb_loop)
+  # T1 = 180
+  # T2 = 360
   th = 1
 
   library(nnet)
+
+  cat(paste0("\n","><>><>><>><>><>><>><>><><>><>><>><>"))
+  cat(paste0("\n","><>  Artificial Neural Network  <><"))
+  cat(paste0("\n","><> ...  Start calibration  ... <><"))
+  cat(paste0("\n","><>><>><>><>><>><>><>><>><>><>><>><>","\n","\n"))
+
 
   output <- list()
   output$samples <-  list()
@@ -127,10 +137,11 @@ calibration_nnet <- function(data, directory, neurons, nb_loop=50, thres_min=0.4
       training_set <- sets$training_set
       validation_set <- sets$validation_set
       muestras <- list(training=training_set,validation=validation_set)
-      namefile = paste0(getwd(),"/muestra_loop_",ii)
-      save(muestras, file = paste0(namefile, ".RData")) # Rdata
-      output$samples[[ii]] <- assign(paste0("samples_", ii), muestras)
+      namefile = paste0("muestra_loop_",ii)
 
+      save(muestras, file = paste0(input_dir, namefile, ".RData")) # Rdata
+
+      output$samples[[ii]] <- assign(paste0("samples_", ii), muestras)
 
       nnet_train <- training_set
       nnet_train <- cbind(nnet_train, training_set$Primera_Cala == 0)
@@ -141,16 +152,21 @@ calibration_nnet <- function(data, directory, neurons, nb_loop=50, thres_min=0.4
       training_set$Cala <- as.factor(training_set$Cala)
       nets <- vector("list", repetitions)
       sse <- rep(NA,repetitions)
+      #     aic <- rep(NA,repetitions)
 
       for (rep in 1:repetitions){
         nets[[rep]] = nnet(Cala_nnet ~ Vel_Cal + Acel_1 + Acel_2 + hora_transf +
                              Cambio_Rumbo_Tiempo,data=training_set,size=neurons,softmax=TRUE,
                            trace = FALSE)
         sse[rep] = sum(nets[[rep]]$residuals^2)
+        #       aic[rep] = dim(training.set)[1]*log(sse[rep]/dim(training.set)[1]) + 2*length(nets[[rep]]$wts)
       }
       best_net = nets[[which.min(sse)]]
-      namefile = paste0(getwd(),"/ann_year_loop_",ii,"_neurons_",neurons)
-      save(best_net, file = paste0(namefile, ".RData"))
+      namefile = paste0("ann_year_loop_",ii,"_neurons_",neurons)
+
+
+      save(best_net, file = paste0(input_dir, namefile, ".RData"))
+
       output$ann[[ii]] <- assign(paste0("ann_loop", ii,"_neurons_",neurons), best_net)
 
       calas_predichas <- as.numeric(best_net$fitted.values[,2] > thres)
@@ -277,6 +293,8 @@ calibration_nnet <- function(data, directory, neurons, nb_loop=50, thres_min=0.4
     prom_dif_ratio <- prom_test[12]
     th <- th + 1
   }
+  #######
+
 
   if (th > 2 && prom_co - prom_ci > 10 && prom_ci_0 - prom_co_0 <  10){
     thres <- threshold[th-2]
@@ -289,8 +307,11 @@ calibration_nnet <- function(data, directory, neurons, nb_loop=50, thres_min=0.4
       training_set <- sets$training_set
       validation_set <- sets$validation_set
       muestras <- list(training=training_set,validation=validation_set)
-      namefile = paste0(getwd(),"/muestra_loop_",ii)
-      save(muestras, file = paste0(namefile, ".RData"))
+      namefile = paste0("muestra_loop_",ii)
+
+
+      save(muestras, file = paste0(input_dir, namefile, ".RData"))
+
       output$samples[[ii]] <- assign(paste0("samples_", ii), muestras)
 
       nnet_train <- training_set
@@ -309,14 +330,16 @@ calibration_nnet <- function(data, directory, neurons, nb_loop=50, thres_min=0.4
       }
 
       best_net = nets[[which.min(sse)]]
-      namefile = paste0(getwd(),"/ann_loop_",ii,"_neurons_",neurons)
-      save(best_net, file = paste0(namefile, ".RData"))
+      namefile = paste0("ann_loop_",ii,"_neurons_",neurons)
+
+      save(best_net, file = paste0(input_dir, namefile, ".RData"))
+
       output$ann[[ii]] <- assign(paste0("ann_loop", ii,"_neurons_",neurons), best_net)
 
       calas_predichas <- as.numeric(best_net$fitted.values[,2] > thres)
       print(calas.predichas)
       CM <- table(data.frame(predicho=calas_predichas == 1, real = training_set$Primera_Cala == 1))
-      # print(CM)
+
       if(sum(dim(CM)) == 4){
         train_perf[1,ii] <- CM[1,2]+CM[2,2] # calas observadas
         train_perf[2,ii] <- CM[2,1]+CM[2,2] # calas identificadas
@@ -436,7 +459,15 @@ calibration_nnet <- function(data, directory, neurons, nb_loop=50, thres_min=0.4
     prom_co <- prom_test[1]
     prom_ci <- prom_test[2]
     prom_dif_ratio <- prom_test[12]
+
   }
+
+  # train:
+  # 1: co; 2: ci; 3: cv; 4: cf; 5: mse; 6: fn; 7: %cv; 8: %cf; 9: %fn; 10: %si; 11: %acc
+  # test:
+  # 1: co; 2: ci; 3: cv; 4: cf; 5: mse; 6: fn; 7: mu; 8: dif; 9: %cv;10: %cf; 11: %fn; 12: %si;
+  # 13: %mu; 14: %acc
+
 
   desv_train <- apply(train_perf,1,sd,na.rm=TRUE)
   desv_test <- apply(test_perf,1,sd,na.rm=TRUE)
@@ -493,21 +524,22 @@ calibration_nnet <- function(data, directory, neurons, nb_loop=50, thres_min=0.4
                                "train_cf_prop","train_cf_num","train_fn_prop","train_fn_num",
                                "train_mse")
 
-  write.csv(results_train,file=paste0(directory,"/TrainInd_neurons_",neurons,".csv",sep="")) ## change
+  write.csv(results_train,file=paste0(input_dir,"TrainInd_neurons_",neurons,".csv",sep=""))
+
   output$results_train <- results_train
   parametros <- matrix(c(nb_loop,neurons,thres),nrow=3,ncol=1)
 
-
-  write.table(parametros,file=paste0(directory,"/TrainPar_loops_neurons_thres.txt"), # change
+  write.table(parametros,file=paste0(input_dir,"TrainPar_loops_neurons_thres.txt"),
               row.names=FALSE,col.names=FALSE)
+
 
   output$parameters <- parametros
 
-  nombre <- paste0("TrainInd_Texto_neurons_",neurons,".txt")
+  nombre <- paste0(input_dir, "TrainInd_Texto_neurons_",neurons,".txt")
   sink(nombre)
   cat("Result mean for partitions of test:")
   cat("\n")
-  cat("percentage of hits: ", round(prom_test[14]*100,2), "% (", round(left_test[14]*100,2), "%," , round(right_test[14]*100,2), "%)")
+  cat("percentage of successes: ", round(prom_test[14]*100,2), "% (", round(left_test[14]*100,2), "%," , round(right_test[14]*100,2), "%)")
   cat("\n")
   cat("percentage of true sets: ", round(prom_test[9]*100,2), "% (", round(left_test[9]*100,2), "%," , round(right_test[9]*100,2), "%)")
   cat("\n")
@@ -542,7 +574,7 @@ calibration_nnet <- function(data, directory, neurons, nb_loop=50, thres_min=0.4
   cat("\n")
   cat("average results for training partitions:")
   cat("\n")
-  cat("percentage of hits: ", round(prom_train[11]*100,2), "% (", round(left_train[11]*100,2), "%," , round(right_train[11]*100,2), "%)")
+  cat("percentage of successes: ", round(prom_train[11]*100,2), "% (", round(left_train[11]*100,2), "%," , round(right_train[11]*100,2), "%)")
   cat("\n")
   cat("percentage of true sets: ", round(prom_train[7]*100,2), "% (", round(left_train[7]*100,2), "%," , round(right_train[7]*100,2), "%)")
   cat("\n")
@@ -572,6 +604,11 @@ calibration_nnet <- function(data, directory, neurons, nb_loop=50, thres_min=0.4
   cat("\n")
   cat("Umbral:", thres)
   sink()
+
+  cat(paste0("\n","><>><>><>><>><>><>><>><><>><>"))
+  cat(paste0("\n","><>  The process is over  <><"))
+  cat(paste0("\n","><>><>><>><>><>><>><>><><>><>","\n","\n"))
+
 
   return(output)
 }
