@@ -91,12 +91,10 @@ nnet_out <- training_nnet(data = data_vms, directory = getwd(), neurons = neuron
 data_vms$Calas <- predict_sets(data = data_vms, directory = getwd(), loops = loops)
 
 # map
+require(maps)
 plot(data_vms$Lon, y = data_vms$Lat, cex = 0.4, pch = 16, xlab = "lon", ylab = "lat")
 points(data_vms$Lon[data_vms$Calas == 1], y = data_vms$Lat[data_vms$Calas == 1], col = 2, cex = 0.4)
-
-plot(data_vms$Lon, y = data_vms$Lat, cex = 0.4, pch = 16, xlab = "lon", ylab = "lat")
-points(data_vms$Lon[data_vms$Calas == 1], y = data_vms$Lat[data_vms$Calas == 1], col = 2, cex = 0.4)
-map("worldHires",fill=T, myborder = FALSE, add = TRUE, col = "green")
+map("worldHires",fill=T, myborder = FALSE, add = TRUE, col = "khaki1")
 box()
 
 }
