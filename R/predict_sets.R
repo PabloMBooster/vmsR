@@ -44,6 +44,7 @@ predict_sets <- function(data = data, directory = getwd(), thres = 0.51, neurons
   ind_change_speed_1 <- which(is.na(data[,variables[3]]))
   ind_change_speed_2 <- which(is.na(data[,variables[4]]))
 
+
   data0 <- data
   data0$Cala <- 0
   data <- data[-c(ind_change_speed_1,ind_change_speed_2),]

@@ -91,10 +91,13 @@ nnet_out <- training_nnet(data = data_vms, directory = getwd(), neurons = neuron
 data_vms$Calas <- predict_sets(data = data_vms, directory = getwd(), loops = loops)
 
 # map
-data_vms2 <- data_vms[data_vms$Cod_Viaje_VMS == unique(data_vms$Cod_Viaje_VMS)[1],]
+plot(data_vms$Lon, y = data_vms$Lat, cex = 0.4, pch = 16, xlab = "lon", ylab = "lat")
+points(data_vms$Lon[data_vms$Calas == 1], y = data_vms$Lat[data_vms$Calas == 1], col = 2, cex = 0.4)
 
-map_vms(x = data_vms2$Lon, y = data_vms2$Lat,   velocity = data_vms2$Vel_Cal)
-points(data_vms2$Lon[data_vms2$Calas == 1], data_vms2$Lat[data_vms2$Calas == 1])
+plot(data_vms$Lon, y = data_vms$Lat, cex = 0.4, pch = 16, xlab = "lon", ylab = "lat")
+points(data_vms$Lon[data_vms$Calas == 1], y = data_vms$Lat[data_vms$Calas == 1], col = 2, cex = 0.4)
+map("worldHires",fill=T, myborder = FALSE, add = TRUE, col = "green")
+box()
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
