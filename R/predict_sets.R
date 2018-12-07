@@ -1,4 +1,4 @@
-predict_sets <- function(data = data, thres = 0.51, neurons = 4, loops = 10){
+predict_sets <- function(data = data, directory = getwd(), thres = 0.51, neurons = 4, loops = 10){
 
   require(nnet)
 
@@ -57,7 +57,7 @@ predict_sets <- function(data = data, thres = 0.51, neurons = 4, loops = 10){
 
   predichas <- matrix(NA,nrow=dim(data_scaled)[1],ncol=loops)
   for (ii in 1:loops){
-    namefile = paste0(getwd(),"/ann_year_loop_",ii,"_neurons_",neurons)
+    namefile = paste0(directory,"/Result_nnet/ann_year_loop_",ii,"_neurons_",neurons)
     load(file = paste0(namefile, ".RData"))
     predicted <- predict(best_net,data_scaled)
     predichas[,ii] <- predicted[,2]

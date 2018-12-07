@@ -4,7 +4,7 @@
 \title{
 Training of the neural network}
 \description{
-Trained a artificial neural network to detected fishing sets in vms data.
+Calibration a artificial neural network to detected fishing sets in vms data.
 The following variables are required for network training: hour, velocity, change of velocity 1,
 change of velocity 2 and change of course.
 
@@ -14,7 +14,7 @@ We use the nnet package and any argument can be modified to improve the performa
 
 }
 \usage{
-calibration_nnet(data, directory, neurons = 4, loops = 10, thres_min = 0.4, thres_max = 0.6, MSE_max = 0.04, prop_train = 0.75, T1 = 180, T2 = 360)
+training_nnet(data, directory, neurons = 4, loops = 10, thres_min = 0.4, thres_max = 0.6, MSE_max = 0.04, prop_train = 0.75, T1 = 180, T2 = 360)
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -79,7 +79,22 @@ maximun threshold
 \examples{
 
 head(data_vms)
-nnet_out <- training_nnet(data = data_vms, directory = getwd(), neurons=4, MSE_max=0.04, nb_loop = 2)
+
+loops = 2
+neurons = 4
+MSE_max = 0.04
+
+# calibration
+nnet_out <- training_nnet(data = data_vms, directory = getwd(), neurons = neurons, MSE_max = MSE_max, loops = loops)
+
+# prediction
+data_vms$Calas <- predict_sets(data = data_vms, directory = getwd(), loops = loops)
+
+# map
+data_vms2 <- data_vms[data_vms$Cod_Viaje_VMS == unique(data_vms$Cod_Viaje_VMS)[1],]
+
+map_vms(x = data_vms2$Lon, y = data_vms2$Lat,   velocity = data_vms2$Vel_Cal)
+points(data_vms2$Lon[data_vms2$Calas == 1], data_vms2$Lat[data_vms2$Calas == 1])
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

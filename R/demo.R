@@ -53,3 +53,5 @@
 #               censored = FALSE, skip = FALSE, rang = 0.7, decay = 0,
 #               maxit = 100, Hess = FALSE, trace = FALSE, MaxNWts = 1000,
 #               abstol = 1.0e-4, reltol = 1.0e-8)
+
+#  predict_sets(data_vms, directory = getwd(), loops = 2)
