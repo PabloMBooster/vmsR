@@ -1,5 +1,9 @@
-calibration_nnet <- function(data, directory, neurons = 4, nb_loop=50, thres_min=0.4, # dossier.0, directorio,
-                             thres_max=0.6, MSE_max=0.04, prop_train=0.75, T1=180, T2=360){
+training_nnet <- function(data, directory, neurons = 4, loops = 50, thres_min = 0.4, # dossier.0, directorio,
+                             thres_max = 0.6, MSE_max = 0.04, prop_train = 0.75, T1 = 180, T2 = 360,
+                             linout = FALSE, entropy = FALSE, softmax = TRUE,
+                             censored = FALSE, skip = FALSE, rang = 0.7, decay = 0,
+                             maxit = 100, Hess = FALSE, trace = FALSE, MaxNWts = 1000,
+                             abstol = 1.0e-4, reltol = 1.0e-8){
 
   subDir <- "Result_nnet"
   dir.create(file.path(directory, subDir), showWarnings = FALSE)
@@ -107,31 +111,29 @@ calibration_nnet <- function(data, directory, neurons = 4, nb_loop=50, thres_min
   prom_co = 0
   prom_ci = 100
   prom_dif_ratio = 1
-  train_perf <- matrix(NA,nrow=11,ncol=nb_loop)
-  test_perf <- matrix(NA,nrow=14,ncol=nb_loop)
-  comparacion <- matrix(NA,nrow=6,ncol=nb_loop)
+  train_perf <- matrix(NA,nrow=11,ncol=loops)
+  test_perf <- matrix(NA,nrow=14,ncol=loops)
+  comparacion <- matrix(NA,nrow=6,ncol=loops)
   # T1 = 180
   # T2 = 360
   th = 1
 
   library(nnet)
-
   cat(paste0("\n","><>><>><>><>><>><>><>><><>><>><>><>"))
   cat(paste0("\n","><>  Artificial Neural Network  <><"))
   cat(paste0("\n","><> ...  Start calibration  ... <><"))
   cat(paste0("\n","><>><>><>><>><>><>><>><>><>><>><>><>","\n","\n"))
 
-
-  output <- list()
-  output$samples <-  list()
-  output$ann     <-  list()
+  output <- list() # remove
+  output$samples <-  list() # remove
+  output$ann     <-  list() # remove
 
   while (prom_co <= prom_ci && prom_dif_ratio > 0.05){
     ptm <- proc.time()[3] # Start the clock!
     ii=1
     vraisloops=0
     thres = thresholds[th]
-    while (ii <= nb_loop){
+    while (ii <= loops){
       vraisloops = vraisloops + 1
       sets <- training_validation_sets(data_scaled,name_traj_ID,prop_train)
       training_set <- sets$training_set
@@ -141,7 +143,7 @@ calibration_nnet <- function(data, directory, neurons = 4, nb_loop=50, thres_min
 
       save(muestras, file = paste0(input_dir, namefile, ".RData")) # Rdata
 
-      output$samples[[ii]] <- assign(paste0("samples_", ii), muestras)
+      output$samples[[ii]] <- assign(paste0("samples_", ii), muestras) # remove
 
       nnet_train <- training_set
       nnet_train <- cbind(nnet_train, training_set$Primera_Cala == 0)
@@ -155,9 +157,17 @@ calibration_nnet <- function(data, directory, neurons = 4, nb_loop=50, thres_min
       #     aic <- rep(NA,repetitions)
 
       for (rep in 1:repetitions){
-        nets[[rep]] = nnet(Cala_nnet ~ Vel_Cal + Acel_1 + Acel_2 + hora_transf +
-                             Cambio_Rumbo_Tiempo,data=training_set,size=neurons,softmax=TRUE,
-                           trace = FALSE)
+        # nets[[rep]] = nnet(Cala_nnet ~ Vel_Cal + Acel_1 + Acel_2 + hora_transf +
+        #                      Cambio_Rumbo_Tiempo, data=training_set, size=neurons, softmax=TRUE,
+        #                    trace = FALSE)
+
+        nets[[rep]] = nnet(formula = Cala_nnet ~ Vel_Cal + Acel_1 + Acel_2 + hora_transf +
+                      Cambio_Rumbo_Tiempo, data = training_set,size = neurons,
+                      linout = linout, entropy = entropy, softmax=softmax,
+                      censored = censored, skip = skip, rang = rang, decay = decay,
+                      maxit = maxit, Hess = Hess, trace = trace, MaxNWts = MaxNWts,
+                      abstol = abstol, reltol = reltol)
+
         sse[rep] = sum(nets[[rep]]$residuals^2)
         #       aic[rep] = dim(training.set)[1]*log(sse[rep]/dim(training.set)[1]) + 2*length(nets[[rep]]$wts)
       }
@@ -295,13 +305,12 @@ calibration_nnet <- function(data, directory, neurons = 4, nb_loop=50, thres_min
   }
   #######
 
-
   if (th > 2 && prom_co - prom_ci > 10 && prom_ci_0 - prom_co_0 <  10){
     thres <- threshold[th-2]
     ii <- 1
     vraisloops <- 1
     ptm <- proc.time()[3] # Start the clock!
-    while (ii <= nb_loop){
+    while (ii <= loops){
       vraisloops = vraisloops + 1
       sets <- training_validation_sets(data_scaled,name_traj_ID,prop_train)
       training_set <- sets$training_set
@@ -323,9 +332,17 @@ calibration_nnet <- function(data, directory, neurons = 4, nb_loop=50, thres_min
       nets <- vector("list", repetitions)
       sse <- rep(NA,repetitions)
       for (rep in 1:repetitions){
-        nets[[rep]] = nnet(Cala.nnet ~ Vel_Cal + Acel_1 + Acel_2 + hora_transf +
-                             Cambio_Rumbo_Tiempo,data=training_set,size=neurons,softmax=TRUE,
-                           trace = FALSE)
+        # nets[[rep]] = nnet(Cala.nnet ~ Vel_Cal + Acel_1 + Acel_2 + hora_transf +
+        #                      Cambio_Rumbo_Tiempo,data=training_set,size=neurons,softmax=TRUE,
+        #                    trace = FALSE)
+
+        nets[[rep]] = nnet(formula = Cala_nnet ~ Vel_Cal + Acel_1 + Acel_2 + hora_transf +
+                             Cambio_Rumbo_Tiempo, data = training_set,size = neurons,
+                           linout = linout, entropy = entropy, softmax=softmax,
+                           censored = censored, skip = skip, rang = rang, decay = decay,
+                           maxit = maxit, Hess = Hess, trace = trace, MaxNWts = MaxNWts,
+                           abstol = abstol, reltol = reltol)
+
         sse[rep] = sum(nets[[rep]]$residuals^2)
       }
 
@@ -473,13 +490,13 @@ calibration_nnet <- function(data, directory, neurons = 4, nb_loop=50, thres_min
   desv_test <- apply(test_perf,1,sd,na.rm=TRUE)
   desv_comp <- apply(comparacion,1,sd,na.rm=TRUE)
   # como todas son medias, (incluyendo la del promedio, sacamos intervalo de confianza de media)
-  error_test <- qt(0.975,df=nb_loop-1)*desv_test/sqrt(nb_loop)
+  error_test <- qt(0.975,df=loops-1)*desv_test/sqrt(loops)
   left_test  <- prom_test - error_test
   right_test <- prom_test + error_test
-  error_train<- qt(0.975,df=nb_loop-1)*desv_train/sqrt(nb_loop)
+  error_train<- qt(0.975,df=loops-1)*desv_train/sqrt(loops)
   left_train  <- prom_train - error_train
   right_train <- prom_train + error_train
-  error_comp <- qt(0.975,df=nb_loop-1)*desv_comp/sqrt(nb_loop)
+  error_comp <- qt(0.975,df=loops-1)*desv_comp/sqrt(loops)
   left_comp  <- prom_comp - error_comp
   right_comp <- prom_comp + error_comp
 
@@ -527,7 +544,7 @@ calibration_nnet <- function(data, directory, neurons = 4, nb_loop=50, thres_min
   write.csv(results_train,file=paste0(input_dir,"TrainInd_neurons_",neurons,".csv",sep=""))
 
   output$results_train <- results_train
-  parametros <- matrix(c(nb_loop,neurons,thres),nrow=3,ncol=1)
+  parametros <- matrix(c(loops,neurons,thres),nrow=3,ncol=1)
 
   write.table(parametros,file=paste0(input_dir,"TrainPar_loops_neurons_thres.txt"),
               row.names=FALSE,col.names=FALSE)
@@ -608,7 +625,6 @@ calibration_nnet <- function(data, directory, neurons = 4, nb_loop=50, thres_min
   cat(paste0("\n","><>><>><>><>><>><>><>><><>><>"))
   cat(paste0("\n","><>  The process is over  <><"))
   cat(paste0("\n","><>><>><>><>><>><>><>><><>><>","\n","\n"))
-
 
   return(output)
 }

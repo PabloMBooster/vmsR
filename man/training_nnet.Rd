@@ -1,23 +1,21 @@
-\name{calibration_nnet}
-\alias{calibration_nnet}
+\name{training_nnet}
+\alias{training_nnet}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Artificial neural network}
+Training of the neural network}
 \description{
-Calibration a artificial neural network to detected fishing sets in vms data.
-The following variables are required for network training:
+Trained a artificial neural network to detected fishing sets in vms data.
+The following variables are required for network training: hour, velocity, change of velocity 1,
+change of velocity 2 and change of course.
 
-- hour: is the hour
-- velocity: the velocity in nudos
-- change_velocity1: diferencia de velocidad respecto a la posicion anterior
-- change_velocity2: diferencia de velocidad respecto a la posicion posterior
-- change_course: change of course.
+The neural network is trained on the basis of the next job (joo 2011). For the validation of the model check the percentage of successes and for increase the precision of the model it is necessary to increase the number of loops.
 
-the neural network is trained on the basis of the next job (joo 2011). For the validation of the model check the percentage of true coves. We use nnet and any argument can be modified to improve the performance.
+We use the nnet package and any argument can be modified to improve the performance.
 
 }
 \usage{
-calibration_nnet(data, directory, neurons = 4, nb_loop = 50, thres_min = 0.4, thres_max = 0.6, MSE_max = 0.04, prop_train = 0.75, T1 = 180, T2 = 360)
+calibration_nnet(data, directory, neurons = 4, loops = 10, thres_min = 0.4, thres_max = 0.6, MSE_max = 0.04, prop_train = 0.75, T1 = 180, T2 = 360)
+
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -79,6 +77,10 @@ maximun threshold
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
+
+head(data_vms)
+nnet_out <- training_nnet(data = data_vms, directory = getwd(), neurons=4, MSE_max=0.04, nb_loop = 2)
+
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
