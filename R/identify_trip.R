@@ -65,15 +65,16 @@ identify_trip <- function(data = data, dharbor = 2, vharbor = 5, rmin = 4,
 
     # filter trips ><>><>><>><>><>><>><>><>><>><>
 
-    omitTrip  = unique(data_trip[data_trip$velocity_2 > vmax # 15
+    omitTrip        = unique(data_trip[data_trip$velocity_2 > vmax # 15
                                  & !is.na(data_trip$velocity_2), "viaje"])
-    data_trip   = data_trip[!data_trip$trip %in% omitTrip, ]
-    omitTrip    = unique(data_trip[data_trip$time > hmax # 2.3
+    data_trip       = data_trip[!data_trip$trip %in% omitTrip, ]
+    omitTrip        = unique(data_trip[data_trip$time > hmax # 2.3
                                    & !is.na(data_trip$time), "viaje"])
-    data_trip   = data_trip[!data_trip$trip %in% omitTrip, ]
+    data_trip       = data_trip[!data_trip$trip %in% omitTrip, ]
     omitdist_harbor = tapply(data_trip$dist_harbor, data_trip$trip, max)
-    omitdist_harbor = as.numeric(names(omitdist_harbor[omitdist_harbor< dmin])) # 5
-    data_trip   = data_trip[!data_trip$trip %in% omitdist_harbor, ]
+    omitdist_harbor = as.numeric(names(omitdist_harbor[omitdist_harbor < dmin])) # 5
+    data_trip       = data_trip[!data_trip$trip %in% omitdist_harbor, ]
+
     # ><>><>><>><>><>><>><>><>><>><>
 
     if(dim(data_trip)[1] == 0){

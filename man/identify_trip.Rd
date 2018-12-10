@@ -15,24 +15,24 @@ identify_trip(data = data, dharbor = 2, vharbor = 5, rmin = 4, vmax = 20, hmax =
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{data}{
-is the data vms processed with the function processing_vms
+set data vms
 }
   \item{dharbor}{
-maximum distance from a registry to the port to be considered as a registry in port, it is expressed in hours.
+distance of the vessel from the harbor when the vessel is still in harbor, it is expressed in hours.
 }
   \item{vharbor}{
-the maximum speed that a boat can reach when it is in the port, it is expressed in knots.
+velocity of the vessel hen the vessel is still in harbor, it is expressed in knots.
 }
   \item{rmin}{
 number of minimum vms records that contains the trajectory of a fishing trip.
 }
   \item{vmax}{
-maximum speed that a trip can reach during the fishing trip.
+maximum velocity that a vessel can reach during the fishing trip.
 }
   \item{hmax}{
 maximum hours that two vms records can contain}
   \item{dmin}{
-minimum distance where a vessel is operating
+threshold of maximum distance to harbor reached during the trip.
 }
   \item{see}{
 %%     ~~Describe \code{see} here~~
