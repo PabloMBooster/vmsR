@@ -6,8 +6,8 @@ Identify fishing trips
 }
 \description{
 
-identifies complete trajectories of fishing trips from VMS data.
-identifies departure and arrival when the ship is less than 2 nautical miles from the port and a speed less than 2 knots. In addition, the time between departure and arrival must last at least 6 hours.
+Identifies complete trajectories of fishing trips from VMS data. It identify the fishing trips from the time the vessels leave port until they return. To do this, you need to generate the variables velocity and distance and a file with the coordinates of the landing harbors.
+
 }
 \usage{
 identify_trip(data = data, dharbor = 2, vharbor = 5, rmin = 4, vmax = 20, hmax = 2.3, dmin = 5, see = FALSE)
