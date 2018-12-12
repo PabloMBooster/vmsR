@@ -10,14 +10,14 @@ distance_harbor <- function(data_vessel, harbor){
 
   all_dist <- NULL
   for(lonp in seq(1,nrow(harbor)*2,by=2)){
-    idist     <-  distORTODROMICA(data_vessel$lon, data_vessel$lat, dist0[,lonp], dist0[,lonp+1])  # Ortodromica ??
+    idist     <-  distORTODROMICA(data_vessel$Lon, data_vessel$Lat, dist0[,lonp], dist0[,lonp+1])  # Ortodromica ??
     all_dist  <-  cbind(all_dist,idist)
   }
 
   all_dist      <- data.frame(all_dist)
-  id_harbor     <- apply(all_dist,1,which.min)
+  id_harbor     <- apply(all_dist, 1, which.min)
   name_harbor   <- idPuerto2(id_harbor)
-  dist_harbor   <- apply(all_dist,1,min) ## distancia al puerto de origen
+  dist_harbor   <- apply(all_dist, 1, min) ## distancia al puerto de origen
 
   return(list(name_harbor = name_harbor, dist_harbor = dist_harbor))
 }

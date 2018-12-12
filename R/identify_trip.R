@@ -1,8 +1,8 @@
-identify_trip <- function(data = data, dharbor = 2, vharbor = 5, rmin = 4,
-                          vmax = 20, hmax = 2.3, dmin = 5, see = FALSE){
+identify_trip <- function(data = data, dharbor = 2, vharbor = 2, rmin = 6,
+                          vmax = 16, hmax = 2.3, dmin = 5, see = FALSE){
 
-  dist_harbor <- data[["dist_harbor"]]  # distance to harbor
-  velocity    <- data[["velocity_2"]]   # velocity between record
+  dist_harbor <- data[["Dist_Harbor"]]  # distance to harbor
+  velocity    <- data[["Vel_Cal"]]   # velocity between record
 
   data$mistake <- 0
   # 0 sin mistake
@@ -11,7 +11,7 @@ identify_trip <- function(data = data, dharbor = 2, vharbor = 5, rmin = 4,
   # 3 la hora en inf y se le pone 0
   velocity[1][is.na(velocity[1])] <- 0
   #demision[1][is.na(demision[1])] <- 0
-  velocity[is.na(velocity)] <- 30 # para se eliminado despues
+  velocity[is.na(velocity)] <- 30 # para ser eliminado despues
   data$mistake[dist_harbor > dist_harbor & is.na(velocity)] <- 1 # 2
 
   #UBICAR LOS PUNTOS EN TIERRA Y MAR
@@ -30,9 +30,9 @@ identify_trip <- function(data = data, dharbor = 2, vharbor = 5, rmin = 4,
   }
   data$id <- id
   #UBICAR LOS VIAJES
-  data$mistake[is.infinite(data$time) & is.na((data$time))] <- 3
-  data$time[is.infinite(data$time) & is.na(data$time)] <- 3
-  data$mistake[data$time > hmax] <- 2
+  data$mistake[is.infinite(data$Time) & is.na((data$Time))] <- 3
+  data$Time[is.infinite(data$Time) & is.na(data$Time)] <- 3
+  data$mistake[data$Time > hmax] <- 2
   data$trip = NA
 
   idist_harbor  <- which(data$id %in% 1)
@@ -65,18 +65,17 @@ identify_trip <- function(data = data, dharbor = 2, vharbor = 5, rmin = 4,
 
     # filter trips ><>><>><>><>><>><>><>><>><>><>
 
-    omitTrip        = unique(data_trip[data_trip$velocity_2 > vmax # 15
-                                 & !is.na(data_trip$velocity_2), "viaje"])
+    omitTrip        = unique(data_trip[data_trip$Vel_Cal > vmax # 15
+                                 & !is.na(data_trip$Vel_Cal), "viaje"])
     data_trip       = data_trip[!data_trip$trip %in% omitTrip, ]
     omitTrip        = unique(data_trip[data_trip$time > hmax # 2.3
                                    & !is.na(data_trip$time), "viaje"])
     data_trip       = data_trip[!data_trip$trip %in% omitTrip, ]
-    omitdist_harbor = tapply(data_trip$dist_harbor, data_trip$trip, max)
+    omitdist_harbor = tapply(data_trip$Dist_Harbor, data_trip$trip, max)
     omitdist_harbor = as.numeric(names(omitdist_harbor[omitdist_harbor < dmin])) # 5
     data_trip       = data_trip[!data_trip$trip %in% omitdist_harbor, ]
 
     # ><>><>><>><>><>><>><>><>><>><>
-
     if(dim(data_trip)[1] == 0){
       data_trip = data
     }

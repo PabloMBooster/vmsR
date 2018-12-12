@@ -5,7 +5,7 @@
 %%  ~~function to do ... ~~
 }
 \description{
-Processing vms data and calculates variables about distance, time, velocity, change velocity and course.
+Processing vms data and calculates variables about distance, time, speed, change speed and course.
 }
 \usage{
 processing_vms(data, vessel = "num_vessel", harbor)
@@ -20,7 +20,7 @@ data raw of the vessel monitoring system
 Identifier of the vessel and must be in character format
 }
   \item{harbor}{
-Data about the coordinates of the harbor
+Data the coordinates of harbors
 }
 }
 

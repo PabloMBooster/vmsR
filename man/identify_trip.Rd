@@ -10,18 +10,18 @@ Identifies complete trajectories of fishing trips from VMS data. It identify the
 
 }
 \usage{
-identify_trip(data = data, dharbor = 2, vharbor = 5, rmin = 4, vmax = 20, hmax = 2.3, dmin = 5, see = FALSE)
+identify_trip(data = data, dharbor = 2, vharbor = 2, rmin = 6, vmax = 16, hmax = 2.3, dmin = 5, see = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{data}{
-set data vms
+VMS dataset.
 }
   \item{dharbor}{
 distance of the vessel from the harbor when the vessel is still in harbor, it is expressed in hours.
 }
   \item{vharbor}{
-velocity of the vessel hen the vessel is still in harbor, it is expressed in knots.
+velocity of the vessel when the vessel is still in harbor, it is expressed in knots.
 }
   \item{rmin}{
 number of minimum vms records that contains the trajectory of a fishing trip.
@@ -30,12 +30,12 @@ number of minimum vms records that contains the trajectory of a fishing trip.
 maximum velocity that a vessel can reach during the fishing trip.
 }
   \item{hmax}{
-maximum hours that two vms records can contain}
+maximum time between two contiguous vms records}
   \item{dmin}{
-threshold of maximum distance to harbor reached during the trip.
+threshold of minimun distance to harbor reached during the trip.
 }
   \item{see}{
-%%     ~~Describe \code{see} here~~
+print each identified trip.
 }
 }
 \details{

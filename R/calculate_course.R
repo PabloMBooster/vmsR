@@ -1,6 +1,6 @@
 calculate_course <- function(x,y){
   vectorCourse <- NULL
-  #vectorCourse [1] <- NA
+  vectorCourse [1] <- NA
   for(i in 2:length(x)){
     x2 <-  x[i]
     y2 <-  y[i]

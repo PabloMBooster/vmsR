@@ -37,7 +37,7 @@ map_vms <- function(x = x, y = y, velocity = velocity, xlab = "LONGITUDE", #text
   y2 <- y0[-1]
 
   plot(y0 ~ x0,  type = "l", xlim = xlim, ylim = ylim, ylab = ylab, xlab = xlab, add = add)
-  #lines(shoreline)
+  lines(shoreline)
   Arrows(x1, y1, x2, y2, arr.type = "curved", code = 2,lty = 1,
          arr.length = 0.2, arr.adj = 1, col = .velCol(velocity))
   #  if(isTRUE(text.lab)){
