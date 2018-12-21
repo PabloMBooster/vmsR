@@ -1,7 +1,6 @@
 
-# data <- dat[,c("Cod_Barco", "Date","Lon", "Lat", "Vel_VMS", "Rumbo_VMS", "Nombre_Barco")]
-# data0 <- data
-# data_vessel <- data[data$Cod_Barco == unique(data$Cod_Barco)[1],]
+
+
 processing_vms <- function(data, vessel = "Cod_Barco", harbor){
 
   library(dplyr)
@@ -17,10 +16,11 @@ processing_vms <- function(data, vessel = "Cod_Barco", harbor){
     data_vessel$Time[2:(length(data_vessel[,1]))] <- (julian(data_vessel$Date[1:(length(data_vessel[,1])-1)])-julian(data_vessel$Date[2:(length(data_vessel[,1]))]))*24*(-1)
 
     data_vessel$Dist_Emisiones <- NA
-    data_vessel$Dist_Emisiones[2:(length(data_vessel[,1]))] <- distORTODROMICA(data_vessel$Lon[1:(length(data_vessel[,1])-1)],data_vessel$Lat[1:(length(data_vessel[,1])-1)],data_vessel$Lon[2:length(data_vessel[,1])],data_vessel$Lat[2:length(data_vessel[,1])])
+    data_vessel$Dist_Emisiones[2:(length(data_vessel[,1]))] <- dist_ortodromica(data_vessel$Lon[1:(length(data_vessel[,1])-1)],data_vessel$Lat[1:(length(data_vessel[,1])-1)],data_vessel$Lon[2:length(data_vessel[,1])],data_vessel$Lat[2:length(data_vessel[,1])])
 
     data_vessel$Vel_Cal <- NA
     data_vessel$Vel_Cal <- data_vessel$Dist_Emisiones/data_vessel$Time
+    data_vessel$Vel_Cal[is.na(data_vessel$Vel_Cal)] <- 0
 
     #data_vessel$change_speed_1  <- NA
     #data_vessel$change_speed_1[-1]  <- diff(data_vessel$velocity_2)
@@ -36,6 +36,12 @@ processing_vms <- function(data, vessel = "Cod_Barco", harbor){
 
   })
   id_vessel <- id_vessel %>% lapply(as.data.frame) %>% bind_rows()
+
+
+  check_date < length(is.na(id_vessel$Date))
+  if(check_date > 0){
+    print(paste0("the date variable has ",check_date,"NA revise it"))
+  }
   return(id_vessel)
 }
 

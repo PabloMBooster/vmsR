@@ -10,7 +10,7 @@ distance_harbor <- function(data_vessel, harbor){
 
   all_dist <- NULL
   for(lonp in seq(1,nrow(harbor)*2,by=2)){
-    idist     <-  distORTODROMICA(data_vessel$Lon, data_vessel$Lat, dist0[,lonp], dist0[,lonp+1])  # Ortodromica ??
+    idist     <-  dist_ortodromica(data_vessel$Lon, data_vessel$Lat, dist0[,lonp], dist0[,lonp+1])  # Ortodromica ??
     all_dist  <-  cbind(all_dist,idist)
   }
 

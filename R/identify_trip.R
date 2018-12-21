@@ -12,7 +12,7 @@ identify_trip <- function(data = data, dharbor = 2, vharbor = 2, rmin = 6,
   data$mistake[data$Dist_Emisiones*data$Time > vmax*hmax] <- 1 # la distancia entre emision no mayor a vmax*hmax
   data$mistake[data$Vel_Cal > vmax] <- 1             # velocidad menor a vmax
   data$mistake[is.infinite(data$Time) & is.na((data$Time))] <- 1
-  data$Time[is.infinite(data$Time) & is.na(data$Time)] <- 1
+  data$Time[1] <- data$Time[2]
 
   # positions on land and sea
   n  <- length(dist_harbor)
@@ -74,6 +74,7 @@ identify_trip <- function(data = data, dharbor = 2, vharbor = 2, rmin = 6,
     # data_trip       = data_trip[!data_trip$trip %in% omitdist_harbor, ]
 
     # ><>><>><>><>><>><>><>><>><>><>
+
     if(dim(data_trip)[1] == 0){
       data_trip = data
     }
