@@ -1,12 +1,13 @@
-# oo <- data_vms[data_vms$Cod_Viaje_VMS == unique(data_vms$Cod_Viaje_VMS)[1],]
-# # data_vms[data_vms$Cod_Viaje_VMS == unique(data_vms$Cod_Viaje_VMS)[1],]
-#
-# map_vms(oo$Lon, oo$Lat, oo$Vel_VMS)
-# lines(linePeru)
+oo <- data_vms[data_vms$Cod_Viaje_VMS == unique(data_vms$Cod_Viaje_VMS)[1],]
+# data_vms[data_vms$Cod_Viaje_VMS == unique(data_vms$Cod_Viaje_VMS)[1],]
+
+map_vms(x = oo$Lon, y = oo$Lat, velocity = oo$Vel_Cal)
+
+#lines(linePeru)
 #
 # ## cargar datos
 # ## buscar datos vms 2013
-# ¿
+#
 #
 # names(dat) <- c("num_vessel", "date", "clase", "tipo_rec","lon", "lat", "num_zona", "velocity", "course", "name_vessel")
 # names(dat) <- c("Cod_Barco", "Date", "Clase_Emision", "tipo_rec","Lon", "Lat", "Zona", "Vel_VMS", "Rumbo_VMS", "Nombre_Barco")
@@ -36,21 +37,21 @@
 # output <- processing_vms(data = data, vessel = "Cod_Barco", harbor = harbor)
 # codigo <- apply(as.data.frame(output$Cod_Barco), 1, extract_number)
 #
-# require(foreign)
-# dat <- read.dbf("D:/disco_rocio/sisesat_2015_2016_FINAL/2016/01_15enero2016pel.dbf")
-#
-# names(dat) <- c("num_vessel", "date", "clase", "tipo_rec","lon", "lat", "num_zona", "velocity", "course", "name_vessel")
-#
-# data <- dat[,c("num_vessel", "date","lon", "lat", "velocity", "course", "name_vessel")]
-# data$date <- modTime(data$date)
-#
-# data0 <- data[data$num_vessel == 17997,]
-#
-# processing_vessel <- output[codigo ==  21142,]
+require(foreign)
+dat <- read.dbf("D:/disco_rocio/sisesat_2015_2016_FINAL/2016/01_15enero2016pel.dbf")
+
+names(dat) <- c("num_vessel", "date", "clase", "tipo_rec","lon", "lat", "num_zona", "velocity", "course", "name_vessel")
+
+data <- dat[,c("num_vessel", "date","lon", "lat", "velocity", "course", "name_vessel")]
+data$date <- modTime(data$date)
+
+data0 <- data[data$num_vessel == 17997,]
+
+processing_vessel <- output[codigo ==  21142,]
 #
 # trip_vessel <- identify_trip(data = processing_vessel, vharbor = 2, rmin = 6, hmax = 2.7)
 # trip_vessel2 <- identify_trip(data = processing_vessel, dharbor = 2, vharbor = 2, rmin = 6, hmax = 2.3)
 # output2 <- identify_trip(data = processing_vessel)
 
-
-
+# peruXY <- linePeru
+# save(peruXY, file = "C:/pablo/D/github/vmsR/data/peruXY.RData")

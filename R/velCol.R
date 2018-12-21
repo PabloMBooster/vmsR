@@ -1,4 +1,4 @@
-.velCol <- function(x){
+velCol <- function(x){
   xcol = x
   xcol[x >= 8] <- 3
   xcol[x >= 5 & x < 8] <- 5

@@ -1,4 +1,4 @@
-.pointZarpe <- function(x,y){
+pointZarpe <- function(x,y){
   x2 <- x[1] + 0.01
   y2 <- y[1]
   x2 <- c(x2,x)
