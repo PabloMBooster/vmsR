@@ -34,30 +34,59 @@
 # output <- processing_vms(data = data, vessel = "Cod_Barco", harbor = harbor)
 # codigo <- apply(as.data.frame(output$Cod_Barco), 1, extract_number)
 # #
-# require(foreign)
-# dat <- read.dbf("D:/disco_rocio/sisesat_2015_2016_FINAL/2016/01_15enero2016pel.dbf")
+
+
+#require(foreign)
+#dat <- read.dbf("D:/disco_rocio/sisesat_2015_2016_FINAL/2016/01_15enero2016pel.dbf")
+#dat <- read.dbf("E:/disco_rocio/sisesat_2015_2016_FINAL/2016/01_15enero2016pel.dbf")
+
+
+#### <><#### <><#### <><#### <><#### <><#### <><#### <><#### <><#### <><#### <><
+# dat <- read.csv("E:/disco_rocio/disco_duro2/vms_prueba_tesis/data_vms/2013/data2013.csv")
+# dat <- dat[,-1]
+# names(dat) <- c("Cod_Barco", "Name_vessel","Date","Lon", "Lat", "Vel_VMS", "Course")
+# dat$Date <- as.POSIXct(strptime(dat$Date, format = "%d/%m/%Y %H:%M"))
+#
+# data0 <- dat[dat$Cod_Barco == "CO-16854-PM",]# 12232
+# output <- processing_vms(data = data0, vessel = "Cod_Barco", harbor = harbor)
+#
+#
 #
 # names(dat) <- c("num_vessel", "date", "clase", "tipo_rec","lon", "lat", "num_zona", "velocity", "course", "name_vessel")
 #
 # data <- dat[,c("num_vessel", "date","lon", "lat", "velocity", "course", "name_vessel")]
+# as.POSIXct(strptime(data$Date, format = "%d/%m/%Y %H:%M"))
+#
 # data$date <- modTime(data$date)
 #
 # names(data) <- c("Cod_Barco", "Date", "Lon", "Lat", "Vel_VMS", "Course", "Name_vessel")
-# output <- processing_vms(data = data, vessel = "Cod_Barco", harbor = harbor)
-# data0 <- data[data$num_vessel == 17997,]
+# data0 <- data[data$Cod_Barco == 12074,]# 12232
 #
+# output <- processing_vms(data = data0, vessel = "Cod_Barco", harbor = harbor)
+#
+# plot(output$Dist_Harbor[output$Dist_Harbor < 1], type = "l", ylim = c(0,15))
+# lines(output$Vel_Cal[output$Dist_Harbor < 1], col = 2)
+#
+# trip_vessel <- identify_trip(data = output, vharbor = 2, rmin = 6, hmax = 2.7)
+# trip_vessel0 <- trip_vessel[trip_vessel$trip == 12,]
+#
+# plot(trip_vessel0$Dist_Emisiones, type = "l")
+#
+# map_vms(trip_vessel0$Lon, trip_vessel0$Lat, trip_vessel0$Vel_Cal)
 # which(is.na(output$Time))
 # output[1:9, "Date"]
 #
+#
 # processing_vessel <- output[codigo ==  21142,]
-#
-# # trip_vessel <- identify_trip(data = processing_vessel, vharbor = 2, rmin = 6, hmax = 2.7)
-# # trip_vessel2 <- identify_trip(data = processing_vessel, dharbor = 2, vharbor = 2, rmin = 6, hmax = 2.3)
-# # output2 <- identify_trip(data = processing_vessel)
-#
-# # peruXY <- linePeru
-# # save(peruXY, file = "C:/pablo/D/github/vmsR/data/peruXY.RData")
-#
+
+#### <><#### <><#### <><#### <><#### <><#### <><
+# trip_vessel <- identify_trip(data = processing_vessel, vharbor = 2, rmin = 6, hmax = 2.7)
+# trip_vessel2 <- identify_trip(data = processing_vessel, dharbor = 2, vharbor = 2, rmin = 6, hmax = 2.3)
+# output2 <- identify_trip(data = processing_vessel)
+
+# peruXY <- linePeru
+# save(peruXY, file = "C:/pablo/D/github/vmsR/data/peruXY.RData")
+
 # output$Dist_Emisiones
 # ddd  <- cut(output$Dist_Emisiones, breaks = c(0,2,4,6,8,10,12,14,16,650))
 # vvv  <- cut(output$Vel_Cal, breaks = c(0,2,4,6,8,10,12,14,16,650))

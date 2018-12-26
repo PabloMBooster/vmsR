@@ -1,4 +1,5 @@
 modTime <- function(x){
+
   xDate <- strsplit(as.character(x), split = " ")
   fecha <- unlist(lapply(xDate,function(xvect) return(xvect[1])))
   hora <- unlist(lapply(xDate,function(xvect) return(xvect[2])))
@@ -16,4 +17,5 @@ modTime <- function(x){
 
   xDatecorr <- as.POSIXct(strptime(paste(fecha,horacorr,sep=" "), format = "%d/%m/%Y %H:%M:%S"))
   return(xDatecorr)
+
 }

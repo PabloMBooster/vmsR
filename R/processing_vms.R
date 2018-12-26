@@ -1,6 +1,3 @@
-
-
-
 processing_vms <- function(data, vessel = "Cod_Barco", harbor){
 
   library(dplyr)
@@ -38,10 +35,11 @@ processing_vms <- function(data, vessel = "Cod_Barco", harbor){
   id_vessel <- id_vessel %>% lapply(as.data.frame) %>% bind_rows()
 
 
-  check_date < length(is.na(id_vessel$Date))
-  if(check_date > 0){
-    print(paste0("the date variable has ",check_date,"NA revise it"))
-  }
+  # check_date < length(is.na(id_vessel$Date))
+  #
+  # if(exists(check_date)){
+  #   print(paste0("the date variable has ",check_date,"NA revise it"))
+  # }
   return(id_vessel)
 }
 

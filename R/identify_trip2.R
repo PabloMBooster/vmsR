@@ -31,13 +31,15 @@ identify_trip <- function(data = data, dharbor = 2, vharbor = 2, rmin = 6,
   data$trip = NA
 
   idist_harbor  <- which(data$id %in% 1)
-  Location        = data.frame(trip_start = idist_harbor)
+  Location      <- data.frame(trip_start = idist_harbor)
+
   if(dim(Location)[1] == 0){
     Location = data.frame(trip_start =c(1,1))
   }
-  Location$length = c(diff(Location$trip_start),1)
 
-  if(max(Location$length) > rmin){
+  Location$length = c(diff(Location$trip_start), 1)
+
+  if(max(Location$length) > rmin){ ## revisar rmin no debe ir aqui poner un valor cualquiera mayor a 6
     Location        = Location[Location$length > rmin,] # 4
     Location$trip_end   = Location$trip_start + Location$length
     Location$same   = c(NA,Location$trip_end[-length(Location$trip_start)] - Location$trip_start[-1])
@@ -91,3 +93,19 @@ identify_trip <- function(data = data, dharbor = 2, vharbor = 2, rmin = 6,
   return(data_trip)
 }
 
+# clean trips
+clean_trips <- function(data, ...){
+  obs_speed <- tapply(data$Vel_Cal, data$trip, max, na.rm = TRUE)
+  obs_time  <- tapply(data$Time, data$trip, max, na.rm = TRUE)
+
+  return(data)
+}
+# omitTrip        = unique(data_trip[data_trip$Vel_Cal > vmax # 15
+#                              & !is.na(data_trip$Vel_Cal), "viaje"])
+# data_trip       = data_trip[!data_trip$trip %in% omitTrip, ]
+# omitTrip        = unique(data_trip[data_trip$Time > hmax # 2.3
+#                                & !is.na(data_trip$Time), "viaje"])
+# data_trip       = data_trip[!data_trip$trip %in% omitTrip, ]
+# omitdist_harbor = tapply(data_trip$Dist_Harbor, data_trip$trip, max)
+# omitdist_harbor = as.numeric(names(omitdist_harbor[omitdist_harbor < dmin])) # 5
+# data_trip       = data_trip[!data_trip$trip %in% omitdist_harbor, ]
