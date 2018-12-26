@@ -64,7 +64,15 @@ print each identified trip.
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
+head(harbor)
+head(data_vms_raw)
 
+data_vessel  <- data_vms_raw[data_vms_raw$Cod_Barco == "CO-16854-PM",]# 12232
+output       <- processing_vms(data = data_vessel, vessel = "Cod_Barco", harbor = harbor)
+trip_vessel  <- identify_trip(data = output, vharbor = 2, rmin = 6, hmax = 2.7)
+
+# map
+map_vms(trip_vessel$Lon[trip_vessel$trip == 1], trip_vessel$Lat[trip_vessel$trip == 1], trip_vessel$Vel_Cal[trip_vessel$trip == 1])
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
