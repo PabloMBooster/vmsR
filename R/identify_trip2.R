@@ -82,24 +82,24 @@
 
 
 # clean trips
-clean_trips <- function(data, vmax, hmax, rmin, dmin){
-
-  # maximun speed of trip (< 15 knots)
-  obs_speed         <- tapply(data$Vel_Cal, data$trip, max, na.rm = TRUE)
-  # time beteewn records (< 2.3 hours)
-  obs_time          <- tapply(data$Time, data$trip, max, na.rm = TRUE)
-  # number of records by trip (> 6 records)
-  obs_num_records   <- tapply(data$Dist_Harbor, data$trip, length)
-  # minimun distance to harbor (10 mn)
-  obs_dharbor       <- tapply(data$Dist_Harbor, data$trip, max, na.rm = TRUE)
-
-  names(obs_speed[obs_speed > vmax])
-  names(obs_time[obs_time > hmax])
-  names(obs_num_records[obs_num_records < rmin])
-  names(obs_dharbor[obs_dharbor > dmin])
-
-  return(data)
-}
+# clean_trips <- function(data, vmax, hmax, rmin, dmin){
+#
+#   # maximun speed of trip (< 15 knots)
+#   obs_speed         <- tapply(data$Vel_Cal, data$trip, max, na.rm = TRUE)
+#   # time beteewn records (< 2.3 hours)
+#   obs_time          <- tapply(data$Time, data$trip, max, na.rm = TRUE)
+#   # number of records by trip (> 6 records)
+#   obs_num_records   <- tapply(data$Dist_Harbor, data$trip, length)
+#   # minimun distance to harbor (10 mn)
+#   obs_dharbor       <- tapply(data$Dist_Harbor, data$trip, max, na.rm = TRUE)
+#
+#   names(obs_speed[obs_speed > vmax])
+#   names(obs_time[obs_time > hmax])
+#   names(obs_num_records[obs_num_records < rmin])
+#   names(obs_dharbor[obs_dharbor > dmin])
+#
+#   return(data)
+# }
 
 
 
