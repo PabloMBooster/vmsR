@@ -26,7 +26,7 @@ processing_vms <- function(data, vessel = "Cod_Barco", harbor){
     #data_vessel$change_speed_2[-length(data_vessel$change_speed_1)]  <- diff(data_vessel$velocity_2)
 
     data_vessel$Rumbo_Calc   <- NA
-    data_vessel$Rumbo_Calc   <- calculate_course(x = data_vessel$Lon, y = data_vessel$Lat)
+    data_vessel$Rumbo_Calc   <- calculate_course(lon = data_vessel$Lon, lat = data_vessel$Lat)
     data_vessel$Cambio_Rumbo_Calc <- apply(matrix(data_vessel$Rumbo_Calc), 1, change_course) # change_course function
 
     as.data.frame(data_vessel)
