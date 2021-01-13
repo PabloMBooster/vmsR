@@ -1,3 +1,4 @@
+
 calculate_course <- function(lon,lat){
   vectorRumbo <- NULL
   vectorRumbo[1] <- NA

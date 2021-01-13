@@ -1,7 +1,7 @@
-# oo <- data_vms[data_vms$Cod_Viaje_VMS == unique(data_vms$Cod_Viaje_VMS)[1],]
+#oo <- data_vms[data_vms$Cod_Viaje_VMS == unique(data_vms$Cod_Viaje_VMS)[1],]
 # # data_vms[data_vms$Cod_Viaje_VMS == unique(data_vms$Cod_Viaje_VMS)[1],]
 #
-# map_vms(x = oo$Lon, y = oo$Lat, velocity = oo$Vel_Cal)
+#map_vms(x = oo$Lon, y = oo$Lat, velocity = oo$Vel_Cal)
 # lines(linePeru)
 #
 # ## cargar datos
