@@ -2,11 +2,10 @@
 \alias{training_nnet}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Training of the neural network}
+Neural network training}
 \description{
-Calibration a artificial neural network to detected fishing sets in vms data.
-The following variables are required for network training: hour, velocity, change of velocity 1,
-change of velocity 2 and change of course.
+Training a artificial neural network to identify fishing sets in vms data.
+The following variables are required for neural network training: hour, change of acceleration and change of course.
 
 The neural network is trained on the basis of the next job (joo 2011). For the validation of the model check the percentage of successes and for increase the precision of the model it is necessary to increase the number of loops.
 

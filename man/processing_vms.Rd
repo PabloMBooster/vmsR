@@ -5,7 +5,7 @@
 %%  ~~function to do ... ~~
 }
 \description{
-Processing vms data and calculates variables about distance, time, speed, change speed and course.
+The processing of the vms data consists of: sorting the VMS data by vessel and date; calculating distances between VMS emissions (orthodromic distance); calculating the distance from each emission to the landing port locations; calculating the vessel's speed at each time step; calculating the elapsed time between each time step; calculating the vessel's heading and; calculating the change of course at each time step.
 }
 \usage{
 processing_vms(data, vessel = "num_vessel", harbor)

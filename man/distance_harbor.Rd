@@ -5,19 +5,18 @@
 Distance harbor
 }
 \description{
-Estimate the distance of vms records to the harbor,
-is used internally by the function \code{processing_vms}.
+Calculates the distance between a vessel's location and the nearest port. It is necessary to have a file of the locations of all landing ports in the fishery. The distance calculated is the orthodromic distance and expressed in nautical miles. The function returns the distance and the name of the port and is used internally by the function \code{processing_vms}.
 }
 \usage{
-distance_harbor(data_vessel, harbor)
+distance_harbor(data_vms, harbor)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{data_vessel}{
-%%     ~~Describe \code{data_vessel} here~~
+  \item{data_vms}{
+vms data
 }
   \item{harbor}{
-%%     ~~Describe \code{harbor} here~~
+archive of landing port locations for the peruvian industrial purse seine fishery
 }
 }
 \details{

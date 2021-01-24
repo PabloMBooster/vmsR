@@ -2,7 +2,7 @@ processing_vms <- function(data, vessel = "Cod_Barco", harbor){
 
   library(dplyr)
 
-  id_vessel <- lapply(split(data, data$Cod_Barco, drop = TRUE), function(data_vessel){
+  id_vessel <- lapply(split(data, data[[vessel]], drop = TRUE), function(data_vessel){
 
     data_vessel     <- data_vessel[order(data_vessel$Date),]
     eharbor         <- distance_harbor(data_vessel, harbor)
