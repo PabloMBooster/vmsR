@@ -1,19 +1,15 @@
 identify_trip <- function(data = data, dharbor = 2, rmin = 6,
                           vmax = 16, vmin = 3,hmax = 2.3){
 
-  dist_harbor <- data[["Dist_Harbor"]]  # distance to harbor
-  speed       <- data[["Vel_Cal"]]      # speed between record
-  if(is.na(speed[1])) speed[1] <- 0
-  if(is.na(data$Time[1])) data$Time[1] <- 0
-  if(is.na(data$Dist_Emisiones[1])) data$Dist_Emisiones[1] <- 0
-
+  data$speed[1][is.na(data$speed[1])] <- 0
+  #data$Time[1][is.na(data$Time[1])] <- 0
+  data$Dist_Emisiones[1][is.na(data$Dist_Emisiones[1])] <- 0
   data$Time[is.infinite(data$Time)] <- 0
   data$Time[is.na(data$Time)] <- 0
 
-
-  #registration on land:1 / sea:0
+  # record land:1 / sea:0
   data$id <- 0
-  data$id[dist_harbor < dharbor] <- 1
+  data$id[data$Dist_Harbor < dharbor] <- 1
 
   data$trip = NA
   idist_harbor  <- which(data$id %in% 1)
@@ -35,15 +31,17 @@ identify_trip <- function(data = data, dharbor = 2, rmin = 6,
     if(length(which(Location$same == 0))>0){
       Location[which(Location$same == 0),"rep"] = 1
     }
-    Location$length <- Location$trip_end - Location$trip_start # volvemos a calcular los records del viaje
-    trip <- rep(1:length(Location$length),Location$length+1) # generamos las secuencia de la trayectoria
-    #trip_rep <- rep(Location$rep,Location$length+1)
-    trip_share_record <- unique(sort(c(which(Location$rep %in% 1), which(Location$rep %in% 1)-1)))# viajes q comparten un registro
 
+    Location$length <- Location$trip_end - Location$trip_start ## vector length
+    trip <- rep(1:length(Location$length),Location$length+1) ## track sequence
+    #trip_rep <- rep(Location$rep,Location$length+1)
+    trip_share_record <- unique(sort(c(which(Location$rep %in% 1), which(Location$rep %in% 1)-1)))# share record
+
+    #id sequence
     recordsTrip <- NULL
     for(u in seq_along(Location$length)){
       emisiones      <- Location$trip_start[u]:Location$trip_end[u]
-      recordsTrip    <- c(recordsTrip, emisiones) # secuencia de registros
+      recordsTrip    <- c(recordsTrip, emisiones) #
     }
     data_trip       <- data[recordsTrip,]
     data_trip$trip  <- trip
@@ -51,6 +49,7 @@ identify_trip <- function(data = data, dharbor = 2, rmin = 6,
     data_trip$share_record <- 0
     data_trip$share_record[data_trip$trip %in% trip_share_record]<- 1
 
+    ## vessel that don't move
     if(dim(data_trip)[1] == 0){
       data_trip = data
       data_trip$mistake <- NA
@@ -60,40 +59,42 @@ identify_trip <- function(data = data, dharbor = 2, rmin = 6,
       data_trip$share_record <- NA
     }
   }
-
+  ## identifying mistakes
   if(!is.na(data_trip$id[1])){
-    ## identifying errors
+
     data_trip$mistake <- 0
     clean_viajes <- lapply(split(data_trip, data_trip$trip, drop = TRUE), function(x){
       y <- x[-1,]
-      if(max(y$Vel_Cal) > vmax){ # velocidad maxima
+      if(max(y$Vel_Cal) > vmax){ # maximun vel
+        y$mistake <- 1 #has some error in velocity
+      }
+      if(length(y$Cod_Barco) < rmin){ # minimum number of record by trip
         y$mistake <- 1
       }
-      if(length(y$Cod_Barco) < rmin){ # registros por viaje
-        y$mistake <- 1
+      if(max(y$Dist_Emisiones) > vmax*hmax){ # umbral maximun dist
+        y$mistake <- 1 #has some error in distance
       }
-      if(max(y$Dist_Emisiones) > vmax*hmax){ # distancia maxima erntre emisiones
-        y$mistake <- 1
+      if(min(y$Time)==0){ # time equals 0
+        y$mistake <- 1 #has some error in time
       }
-      if(min(y$Time)==0){ # tiempo entre emisiones mayor a 0
-        y$mistake <- 1
+      if(min(y$Time) > hmax){ # umbral maximun time
+        y$mistake <- 1 #has some error in time
       }
-      if(min(y$Time) > hmax){ # tiempo maximo entre emisiones
-        y$mistake <- 1
-      }
-      if(min(y$Vel_VMS[-length(y$Vel_VMS)]) > vmin){ # Velocidad minima del barco sin considerar el zarpe y arribo
-        y$mistake <- 3
+      if(min(y$Vel_VMS[-length(y$Vel_VMS)]) > vmin){ # umbral minimun velocity
+        y$mistake <- 3 # it is not a fishing trip
       }
 
       as.data.frame(y)
     })
     clean_viajes <- clean_viajes %>% lapply(as.data.frame) %>% bind_rows()
-    clean_viajes$mistake[clean_viajes$share_record == 1] <- 2 # el error se presenta al inicio y final del viaje
+    clean_viajes$mistake[clean_viajes$share_record == 1] <- 2 # error at the beginning to the end
 
   }else{
     clean_viajes <- data_trip
-    clean_viajes$mistake <- 4
+    clean_viajes$mistake <- 4 # vessels that don´t move
   }
+
+  clean_viajes$dist_costa <- estima_dc2(lon = clean_viajes$Lon, lat = clean_viajes$Lat)
   return(clean_viajes)
 }
 
