@@ -331,20 +331,24 @@ match_vms <- function(data, new_data, ...){
 
 
 ##******************************************************
-identify_trajectories <- function(data, vharbor = 2, rmin = 6, hmax = 2.7){
+identify_trajectories <- function(data,   dharbor = 2, rmin = 6,
+                                  vmax = 16, hmax = 2.3){
+
+
+
   library(dplyr)
   #library(geoR)
   library(rgeos)
   library(sp)
+  #x <- data[data$Cod_Barco %in% data$Cod_Barco[1],]
   id_viajes <- lapply(split(data, data$Cod_Barco, drop = TRUE), function(x){
-    y <- identify_trip(data = x, vharbor = vharbor, rmin = rmin, hmax = hmax)
+    y <- identify_trip(data = x, dharbor = dharbor, rmin = rmin, hmax = hmax)
 
     as.data.frame(y)
   })
   id_viajes <- id_viajes %>% lapply(as.data.frame) %>% bind_rows()
-
-  id_viajes <- viaje_registro_compartido(data = id_viajes)
-  id_viajes <- eliminar_emisiones_erradas(data = id_viajes)
+  #id_viajes <- viaje_registro_compartido(data = id_viajes)
+  #id_viajes <- eliminar_emisiones_erradas(data = id_viajes)
   id_viajes$dist_costa <- estima_dc2(lon = id_viajes$Lon, lat = id_viajes$Lat)
 
 
@@ -352,52 +356,53 @@ identify_trajectories <- function(data, vharbor = 2, rmin = 6, hmax = 2.7){
 }
 
 ##******************************************************
-viaje_registro_compartido <- function(data){
-  id =  paste0("bb",row.names(data))
-  id = substring(id, nchar(id)-1, nchar(id))
-  id = which(id %in% ".1")
-
-  for(i in id){
-    fecha = seq.POSIXt(from = data[i, "Date"], to = data[i + 1, "Date"], by = "hour")
-    data[i ,"Date"]           <- fecha[length(fecha)-1]
-    data[i ,"Vel_Cal"]        <- 0
-    data[i ,"Dist_Emisiones"] <- 0
-    data[i ,"Time"]           <- 1
-    data[i + 1,"Time"]        <- as.numeric(diff.POSIXt(data[c(i,i+1),"Date"]))
-  }
-  return(data)
-}
+# viaje_registro_compartido <- function(data){
+#   id =  paste0("bb",row.names(data))
+#   id = substring(id, nchar(id)-1, nchar(id))
+#   id = which(id %in% ".1")
+#
+#   for(i in id){
+#     fecha = seq.POSIXt(from = data[i, "Date"], to = data[i + 1, "Date"], by = "hour")
+#     data[i ,"Date"]           <- fecha[length(fecha)-1]
+#     data[i ,"Vel_Cal"]        <- 0
+#     data[i ,"Dist_Emisiones"] <- 0
+#     data[i ,"Time"]           <- 1
+#     data[i + 1,"Time"]        <- as.numeric(diff.POSIXt(data[c(i,i+1),"Date"]))
+#   }
+#   return(data)
+# }
 
 ##******************************************************
 #x <- data[data$trip %in% data$trip[1], ]
-eliminar_emisiones_erradas <- function(data){
-  library(dplyr)
-
-  limpiar_filas <- lapply(split(data, data$trip, drop = TRUE), function(x){
-
-    obs_time <- x$Time[is.na(x$Time)]
-    error_fila     <- rep(0, length(x$Lat))
-    error_fila[-1] <- abs(diff(round(x$Lat,1)))
-    # error en latitud
-    ubicar_error_lat <- which(error_fila > 0.5)
-    if(length(ubicar_error_lat) != 0){
-      x    <- x[-ubicar_error_lat,]
-    }
-    # error en time
-    ubicar_error_time <- which(round(x$Time,2) < 0.05)
-    if(length(ubicar_error_time) != 0){
-      x    <- x[-ubicar_error_time,]
-    }
-
-    if(x$Time[1] > 2.7){
-      x$Time[1] = 1
-    }
-
-    as.data.frame(x)
-  })
-  limpiar_filas <- limpiar_filas %>% lapply(as.data.frame) %>% bind_rows()
-  return(limpiar_filas)
-}
+# eliminar_emisiones_erradas <- function(data){
+#   library(dplyr)
+#
+#
+#   limpiar_filas <- lapply(split(data, data$trip, drop = TRUE), function(x){
+#
+#     obs_time       <- x$Time[is.na(x$Time)]
+#     error_fila     <- rep(0, length(x$Lat))
+#     error_fila[-1] <- abs(diff(round(x$Lat,1)))
+#     # error en latitud
+#     ubicar_error_lat <- which(error_fila > 0.5)
+#     if(length(ubicar_error_lat) != 0){
+#       x    <- x[-ubicar_error_lat,]
+#     }
+#     # error en time
+#     ubicar_error_time <- which(round(x$Time,2) < 0.05)
+#     if(length(ubicar_error_time) != 0){
+#       x    <- x[-ubicar_error_time,]
+#     }
+#
+#     if(x$Time[1] > 2.7){
+#       x$Time[1] = 1
+#     }
+#
+#     as.data.frame(x)
+#   })
+#   limpiar_filas <- limpiar_filas %>% lapply(as.data.frame) %>% bind_rows()
+#   return(limpiar_filas)
+# }
 
 ##******************************************************
 estima_dc2 <- function(lon, lat, polygon = NULL){
