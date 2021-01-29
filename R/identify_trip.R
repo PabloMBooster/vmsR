@@ -1,6 +1,8 @@
 identify_trip <- function(data = data, dharbor = 2, rmin = 6,
-                          vmax = 16, vmin = 3,hmax = 2.3){
+                           vmax = 16, vmin = 3,hmax = 2.3){
 
+  require(dplyr)
+  require(vsmR)
   data$speed[1][is.na(data$speed[1])] <- 0
   #data$Time[1][is.na(data$Time[1])] <- 0
   data$Dist_Emisiones[1][is.na(data$Dist_Emisiones[1])] <- 0
@@ -21,6 +23,7 @@ identify_trip <- function(data = data, dharbor = 2, rmin = 6,
 
   Location$length = c(diff(Location$trip_start), 1)
   Location$rep = 0
+
   if(max(Location$length) > rmin){ ## trips with more than 6 records
 
     Location            <- Location[Location$length > rmin,] # 4
@@ -50,14 +53,23 @@ identify_trip <- function(data = data, dharbor = 2, rmin = 6,
     data_trip$share_record[data_trip$trip %in% trip_share_record]<- 1
 
     ## vessel that don't move
-    if(dim(data_trip)[1] == 0){
-      data_trip = data
-      data_trip$mistake <- NA
-      data_trip$id <- NA
-      data_trip$trip <- NA
-      data_trip$Records <- NA
-      data_trip$share_record <- NA
-    }
+    # if(dim(data_trip)[1] == 0){
+    #   data_trip = data
+    #   data_trip$mistake <- NA
+    #   data_trip$id <- NA
+    #   data_trip$trip <- NA
+    #   data_trip$Records <- NA
+    #   data_trip$share_record <- NA
+    # }
+
+  }else{
+    data_trip = data
+    data_trip$mistake <- NA
+    data_trip$id <- NA
+    data_trip$trip <- NA
+    data_trip$Records <- NA
+    data_trip$share_record <- NA
+
   }
   ## identifying mistakes
   if(!is.na(data_trip$id[1])){
@@ -66,35 +78,35 @@ identify_trip <- function(data = data, dharbor = 2, rmin = 6,
     clean_viajes <- lapply(split(data_trip, data_trip$trip, drop = TRUE), function(x){
       y <- x[-1,]
       if(max(y$Vel_Cal) > vmax){ # maximun vel
-        y$mistake <- 1 #has some error in velocity
+        x$mistake <- 1 #has some error in velocity
       }
       if(length(y$Cod_Barco) < rmin){ # minimum number of record by trip
-        y$mistake <- 1
+        x$mistake <- 1
       }
-      if(max(y$Dist_Emisiones) > vmax*hmax){ # umbral maximun dist
-        y$mistake <- 1 #has some error in distance
-      }
+      #if(max(y$Dist_Emisiones) > vmax*hmax){ # umbral maximun dist
+      #y$mistake <- 1 #has some error in distance
+      #}
       if(min(y$Time)==0){ # time equals 0
-        y$mistake <- 1 #has some error in time
+        x$mistake <- 1 #has some error in time
       }
       if(min(y$Time) > hmax){ # umbral maximun time
-        y$mistake <- 1 #has some error in time
+        x$mistake <- 1 #has some error in time
       }
       if(min(y$Vel_VMS[-length(y$Vel_VMS)]) > vmin){ # umbral minimun velocity
-        y$mistake <- 3 # it is not a fishing trip
+        x$mistake <- 3 # it is not a fishing trip
       }
 
-      as.data.frame(y)
+      as.data.frame(x)
     })
     clean_viajes <- clean_viajes %>% lapply(as.data.frame) %>% bind_rows()
     clean_viajes$mistake[clean_viajes$share_record == 1] <- 2 # error at the beginning to the end
 
   }else{
     clean_viajes <- data_trip
-    clean_viajes$mistake <- 4 # vessels that don´t move
+    clean_viajes$mistake <- 4 # vessels that dont move
   }
 
-  clean_viajes$dist_costa <- estima_dc2(lon = clean_viajes$Lon, lat = clean_viajes$Lat)
+  clean_viajes$dist_costa <- dist_cost(lon = clean_viajes$Lon, lat = clean_viajes$Lat, polygon = vmsR::PERU_SP)
   return(clean_viajes)
 }
 
