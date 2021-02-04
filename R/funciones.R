@@ -126,34 +126,17 @@ posiciones_cala <- function(data){
     if(sum(x$calas) > 0){
       ncalas   <-  1:(length(which(diff(which(x$calas == 1)) > 1)) + 1)
       x$ncalas[x$calas == 1] <- rep(ncalas , diff(which(x$calas == 0))[diff(which(x$calas == 0)) > 1] - 1)
-
-
       for(i in unique(unique(ncalas))){
-
         x[x$ncalas == i, "calas"][which.min(x[x$ncalas == i, "Vel_Cal"])[1]] <- 1
         x[x$ncalas == i, "Lon_calas"][which.min(x[x$ncalas == i, "Vel_Cal"])[1]] <- x[x$ncalas == i, "Lon"][which.min(x[x$ncalas == i, "Vel_Cal"])[1]]
         x[x$ncalas == i, "Lat_calas"][which.min(x[x$ncalas == i, "Vel_Cal"])[1]] <- x[x$ncalas == i, "Lat"][which.min(x[x$ncalas == i, "Vel_Cal"])[1]]
-
       }
-      # for(i in unique(ncalas)){
-      #   if(length(x[x$ncalas == i, "calas"]) > 3){
-      #     x[x$ncalas == i, "calas"][1] <- 1
-      #     x[x$ncalas == i, "Lon_calas"][1] <- x[x$ncalas == i, "Lon"][1]
-      #     x[x$ncalas == i, "Lat_calas"][1] <- x[x$ncalas == i, "Lat"][1]
-      #     #x[x$ncalas == i, "inicio_cala"][1] <- x[x$ncalas == i, "date"][1]
-      #     #x[x$ncalas == i, "fin_cala"][1]    <- x[x$ncalas == i, "date"][1]
-      #   }else{
-      #     x[x$ncalas == i, "calas"][which.min(x[x$ncalas == i, "Vel_Cal"])[1]] <- 1
-      #     x[x$ncalas == i, "Lon_calas"][which.min(x[x$ncalas == i, "Vel_Cal"])[1]] <- x[x$ncalas == i, "Lon"][which.min(x[x$ncalas == i, "Vel_Cal"])[1]]
-      #     x[x$ncalas == i, "Lat_calas"][which.min(x[x$ncalas == i, "Vel_Cal"])[1]] <- x[x$ncalas == i, "Lat"][which.min(x[x$ncalas == i, "Vel_Cal"])[1]]
-      #   }
-      # }
+
     }
     as.data.frame(x)
   })
 
   id_calas <- id_calas %>% lapply(as.data.frame) %>% bind_rows()
-  # id_calas[id_calas$ id_calas$dist_costa < 5
   return(id_calas)
 }
 

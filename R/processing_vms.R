@@ -23,9 +23,9 @@ processing_vms <- function(data, vessel = "Cod_Barco", harbor){
     data_vessel$Dist_Emisiones <- NA
     data_vessel$Dist_Emisiones[2:(length(data_vessel[,1]))] <- dist_ortodromica(data_vessel$Lon[1:(length(data_vessel[,1])-1)],data_vessel$Lat[1:(length(data_vessel[,1])-1)],data_vessel$Lon[2:length(data_vessel[,1])],data_vessel$Lat[2:length(data_vessel[,1])])
 
-    data_vessel$Vel_Cal <- NA
-    data_vessel$Vel_Cal <- data_vessel$Dist_Emisiones/data_vessel$Time
-    data_vessel$Vel_Cal[is.na(data_vessel$Vel_Cal)] <- 0
+    data_vessel$Vel.Cal <- NA
+    data_vessel$Vel.Cal <- data_vessel$Dist_Emisiones/data_vessel$Time
+    data_vessel$Vel.Cal[is.na(data_vessel$Vel.Cal)] <- 0
 
     data_vessel$Course_Calc   <- NA
     data_vessel$Course_Calc   <- calculate_course(lon = data_vessel$Lon, lat = data_vessel$Lat)
