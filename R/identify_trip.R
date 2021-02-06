@@ -3,7 +3,7 @@ identify_trip <- function(data = data, dharbor = 2, rmin = 6,
 
   require(dplyr)
   require(vsmR)
-  data$speed[1][is.na(data$speed[1])] <- 0
+  data$Vel.Cal[1][is.na(data$Vel.Cal[1])] <- 0
   #data$Time[1][is.na(data$Time[1])] <- 0
   data$Dist_Emisiones[1][is.na(data$Dist_Emisiones[1])] <- 0
   data$Time[is.infinite(data$Time)] <- 0
@@ -77,7 +77,7 @@ identify_trip <- function(data = data, dharbor = 2, rmin = 6,
     data_trip$mistake <- 0
     clean_viajes <- lapply(split(data_trip, data_trip$trip, drop = TRUE), function(x){
       y <- x[-1,]
-      if(max(y$Vel_Cal) > vmax){ # maximun vel
+      if(max(y$Vel.Cal) > vmax){ # maximun vel
         x$mistake <- 1 #has some error in velocity
       }
       if(length(y$Cod_Barco) < rmin){ # minimum number of record by trip
