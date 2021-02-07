@@ -116,20 +116,23 @@ seleccionar_vms <- function(data, ...){
 posiciones_cala <- function(data){
 
   data$ncalas <- 0
-  #data$calas  <- 0
+  data$calas  <- 0
   data$Lon_calas <- NA
   data$Lat_calas <- NA
-  data$calas[is.na(data$calas)] <- 0 # observar NAs
 
   id_calas <- lapply(split(data, data$Cod_Viaje_VMS, drop = TRUE), function(x){
 
-    if(sum(x$calas) > 0){
-      ncalas   <-  1:(length(which(diff(which(x$calas == 1)) > 1)) + 1)
-      x$ncalas[x$calas == 1] <- rep(ncalas , diff(which(x$calas == 0))[diff(which(x$calas == 0)) > 1] - 1)
+    if(sum(x$id_calas) > 0){
+      ncalas   <-  1:(length(which(diff(which(x$id_calas == 1)) > 1)) + 1)
+      x$ncalas[x$id_calas == 1] <- rep(ncalas , diff(which(x$id_calas == 0))[diff(which(x$id_calas == 0)) > 1] - 1)
+
+
       for(i in unique(unique(ncalas))){
-        x[x$ncalas == i, "calas"][which.min(x[x$ncalas == i, "Vel_Cal"])[1]] <- 1
-        x[x$ncalas == i, "Lon_calas"][which.min(x[x$ncalas == i, "Vel_Cal"])[1]] <- x[x$ncalas == i, "Lon"][which.min(x[x$ncalas == i, "Vel_Cal"])[1]]
-        x[x$ncalas == i, "Lat_calas"][which.min(x[x$ncalas == i, "Vel_Cal"])[1]] <- x[x$ncalas == i, "Lat"][which.min(x[x$ncalas == i, "Vel_Cal"])[1]]
+
+        x[x$ncalas == i, "calas"][which.min(x[x$ncalas == i, "Vel.Cal"])[1]] <- 1
+        x[x$ncalas == i, "Lon_calas"][which.min(x[x$ncalas == i, "Vel.Cal"])[1]] <- x[x$ncalas == i, "Lon"][which.min(x[x$ncalas == i, "Vel.Cal"])[1]]
+        x[x$ncalas == i, "Lat_calas"][which.min(x[x$ncalas == i, "Vel.Cal"])[1]] <- x[x$ncalas == i, "Lat"][which.min(x[x$ncalas == i, "Vel.Cal"])[1]]
+
       }
 
     }
@@ -137,6 +140,7 @@ posiciones_cala <- function(data){
   })
 
   id_calas <- id_calas %>% lapply(as.data.frame) %>% bind_rows()
+  # id_calas[id_calas$ id_calas$dist_costa < 5
   return(id_calas)
 }
 
@@ -194,7 +198,7 @@ por_viaje <- function(data){
         recorrido_cala_a_cala  <- sum(x$Dist_Emisiones[ubicacion_calas[1]:ubicacion_calas[2]])
       }
 
-      vel_max          <- max(x$Vel_Cal, na.rm = T)
+      vel_max          <- max(x$Vel.Cal, na.rm = T)
 
       lat_max <- max(x$Lat, na.rm = T)
       lat_min <- min(x$Lat, na.rm = T)
@@ -220,7 +224,7 @@ por_viaje <- function(data){
 
       num_lances         <- 0
       tiempo_entre_calas <- 0
-      vel_max          <- max(x$Vel_Cal, na.rm = T)
+      vel_max          <- max(x$Vel.Cal, na.rm = T)
       lat_max <- max(x$Lat, na.rm = T)
       lat_min <- min(x$Lat, na.rm = T)
       lon_max <- max(x$Lon, na.rm = T)
@@ -250,7 +254,7 @@ validacion_cala <- function(data){
   validacion <- lapply(split(data, data$trip, drop = TRUE), function(x){
     #print(x$Cod_Viaje_VMS[1])
     # velocidades mayores a 2 y que registren cala # observar
-    x$calas[x$calas == 1 & x$Vel_Cal > 2] <- 0
+    x$calas[x$calas == 1 & x$Vel.Cal > 2] <- 0
     x$Lon_calas[x$calas != 1 ] <- NA
     x$Lat_calas[x$calas != 1 ] <- NA
 
