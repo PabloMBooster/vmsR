@@ -10,7 +10,7 @@ Identifies complete trajectories of fishing trips from VMS data. It identify the
 
 }
 \usage{
-identify_trip(data = data, dharbor = 2, rmin = 6, vmax = 16, vmin = 16, hmax = 2.3,)
+identify_trip(data = data, dharbor = 2, rmin = 6, vmax = 16, vmin = 16, hmax = 2.3,dur_viaje = 6)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -31,6 +31,9 @@ threshold of velocity to consider the vessel as having made a fishing trip
 }
   \item{hmax}{
 maximum time between two contiguous vms records
+  }
+    \item{dur_viaje}{
+minimum trip duration
   }
 }
 
