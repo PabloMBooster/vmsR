@@ -1,8 +1,6 @@
 processing_vms <- function(data, vessel = "Cod_Barco", harbor){
 
   library(dplyr)
-
-
   id_vessel <- lapply(split(data, data[[vessel]], drop = TRUE), function(data_vessel){
 
     data_vessel     <- data_vessel[order(data_vessel$Date),]
@@ -15,10 +13,11 @@ processing_vms <- function(data, vessel = "Cod_Barco", harbor){
     data_vessel$Harbor      <- eharbor$name_harbor
     data_vessel$Dist_Harbor <- eharbor$dist_harbor
 
-
-
-    data_vessel$Time      <- NA
-    data_vessel$Time[2:(length(data_vessel[,1]))] <- (julian(data_vessel$Date[1:(length(data_vessel[,1])-1)])-julian(data_vessel$Date[2:(length(data_vessel[,1]))]))*24*(-1)
+    # data_vessel$Time      <- NA
+    # data_vessel$Time[2:(length(data_vessel[,1]))] <- (julian(data_vessel$Date[1:(length(data_vessel[,1])-1)])-julian(data_vessel$Date[2:(length(data_vessel[,1]))]))*24*(-1)
+    data_vessel$Time <- NA
+    data_vessel$Time[2:(length(data_vessel[,1]))] <- difftime(time1 = data_vessel$Date[2:length(data_vessel$Lon)],units = "hours",
+                                                               time2 = data_vessel$Date[1:(length(data_vessel$Lon)-1)])
 
     data_vessel$Dist_Emisiones <- NA
     data_vessel$Dist_Emisiones[2:(length(data_vessel[,1]))] <- dist_ortodromica(data_vessel$Lon[1:(length(data_vessel[,1])-1)],data_vessel$Lat[1:(length(data_vessel[,1])-1)],data_vessel$Lon[2:length(data_vessel[,1])],data_vessel$Lat[2:length(data_vessel[,1])])
@@ -36,6 +35,13 @@ processing_vms <- function(data, vessel = "Cod_Barco", harbor){
 
   })
   id_vessel <- id_vessel %>% lapply(as.data.frame) %>% bind_rows()
+
+  record <- dim(data)[1] - dim(id_vessel)[1]
+
+
+  cat(paste0("\n","><>><>><>><>><>><>><>><><>><>><>><>><>><>"))
+  cat(paste0("\n",record, " duplicate records were omitted"))
+  cat(paste0("\n","><>><>><>><>><>><>><>><><>><>><>><>><>><>","\n","\n"))
 
   return(id_vessel)
 }

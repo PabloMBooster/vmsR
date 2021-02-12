@@ -148,7 +148,7 @@ predict_sets <- function(data = data, directory = getwd(), thres = 0.51, neurons
   #predict_sets <- data0$Cala
   #id_viajes$Cod_Barco_trip <- paste0(data0$Cod_Barco, "_",data0$trip)
   data0 <- posiciones_cala(data0)
-
+  data0 <- validacion_cala(data0)
   return(data0)
 }
 
@@ -172,6 +172,7 @@ identify_set <- function(data = data, thres = 0.51, loops = 10, freq_vms = "low"
     #which(names(data_sel) %in% nameVMS)
 
     output <- data_sel[, which(names(data_sel) %in% nameVMS)]
-    }
+  }
+  output   <- validacion_cala(data = output)
     return(output)
 }
