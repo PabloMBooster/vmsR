@@ -6,7 +6,7 @@ Identify fishing trips
 }
 \description{
 
-Identifies complete trajectories of fishing trips from VMS data. It identify the fishing trips from the time the vessels leave port until they return. To do this, you need to generate the variables velocity and distance and a file with the coordinates of the landing harbors.
+Identifies complete trajectories of fishing trips from VMS data, since the vessel departs and returns to harbor. You must know the distance from the VMS to the port, when this distance is less than a certain threshold (dharbor), it is assumed that the vessel is in port. The distance from the VMS to the port is calculated in the \code{processing_vms} function.
 
 }
 \usage{
@@ -18,10 +18,10 @@ identify_trip(data = data, dharbor = 2, rmin = 6, vmax = 16, vmin = 16, hmax = 2
 VMS dataset.
 }
   \item{dharbor}{
-distance of the vessel from the harbor when the vessel is still in harbor, it is expressed in nautical miles.
+threshold of distance to determine if the vessel is in harbor, it is expressed in nautical miles.
 }
   \item{rmin}{
-number of minimum vms records that contains the trajectory of a fishing trip.
+number of minimum VMS records that contains the trajectory of a fishing trip.
 }
   \item{vmax}{
 maximum velocity that a vessel can reach during the fishing trip.
