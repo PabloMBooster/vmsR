@@ -13,7 +13,12 @@ We use the nnet package and any argument can be modified to improve the performa
 
 }
 \usage{
-training_nnet(data, directory, neurons = 4, loops = 10, thres_min = 0.4, thres_max = 0.6, MSE_max = 0.04, prop_train = 0.75, T1 = 180, T2 = 360)
+training_nnet(data, directory, formula, neurons = 4, loops = 50, thres_min = 0.4, # dossier.0, directorio,
+                           thres_max = 0.6, MSE_max = 0.04, prop_train = 0.75, T1 = 180, T2 = 360,
+                           linout = FALSE, entropy = FALSE, softmax = TRUE,
+                           censored = FALSE, skip = FALSE, rang = 0.7, decay = 0,
+                           maxit = 100, Hess = FALSE, trace = FALSE, MaxNWts = 1000,
+                           abstol = 1.0e-4, reltol = 1.0e-8)
 
 }
 %- maybe also 'usage' for other objects documented here.

@@ -1,91 +1,70 @@
-training_nnet <- function(data, directory, neurons = 4, loops = 50, thres_min = 0.4, # dossier.0, directorio,
-                             thres_max = 0.6, MSE_max = 0.04, prop_train = 0.75, T1 = 180, T2 = 360,
-                             linout = FALSE, entropy = FALSE, softmax = TRUE,
-                             censored = FALSE, skip = FALSE, rang = 0.7, decay = 0,
-                             maxit = 100, Hess = FALSE, trace = FALSE, MaxNWts = 1000,
-                             abstol = 1.0e-4, reltol = 1.0e-8){
+training_nnet <- function(data, directory, formula, neurons = 4, loops = 50, thres_min = 0.4, # dossier.0, directorio,
+                           thres_max = 0.6, MSE_max = 0.04, prop_train = 0.75, T1 = 180, T2 = 360,
+                           linout = FALSE, entropy = FALSE, softmax = TRUE,
+                           censored = FALSE, skip = FALSE, rang = 0.7, decay = 0,
+                           maxit = 100, Hess = FALSE, trace = FALSE, MaxNWts = 1000,
+                           abstol = 1.0e-4, reltol = 1.0e-8){
 
   subDir <- "Result_nnet"
   dir.create(file.path(directory, subDir), showWarnings = FALSE)
   input_dir <- paste0(directory,"/",subDir,"/")
 
-  # 1. Nombre del barco
-  # 2. CÃ³digo del barco
-  # 3. Fecha emisiÃ³n VMS en formato Matlab
-  # 4. Clase de emisiÃ³n
-  # 5. Longitud VMS
-  # 6. Latitud VMS
-  # 7. NÃºmero de zona
-  # 8. Velocidad (dada por VMS)
-  # 9. Rumbo (dado por VMS)
-  # 10. Distancia al Puerto (0 lejos o 1 cerca)
-  # 11. Distancia al puerto (nm)
-  # 12. Diferencia de tiempo entre 2 emisiones
-  # 13. Distancia entre 2 emisiones (nm)
-  # 14. Velocidad calculada entre 2 emisiones (nm/hora);
-  # 15. Cambio de rumbo calculado (valor absolutos, grados sexagesimales)
-  # 16. Longitud del observador al inicio de la cala
-  # 17. Latitud del observador al inicio de la cala
-  # 18. Cala (0 no cala y 1 cala)
-  # 19. Primera cala (0 no primera cala y 1 primera cala)
-  # 20. Distancia cala-emisiÃ³n
-  # 21. CÃ³digo de viaje
-  # 22. Nuevo cÃ³digo de viaje (cruzado)
-  # 23. Clase de flota
-  # 24. Pesca real (1 si hubo pesca en ese viaje, segÃºn bitacorero, 0 si no hubo)
 
-  data$date      <- as.POSIXct(strptime(as.character(data$Fecha_Matlab), format = "%Y-%m-%d %H:%M"))
-  data$date_GMT  <- as.POSIXct(data$date,tz='GMT')
-  data$Cod_Barco <- as.factor(data$Cod_Barco)
-  data$Clase_Emision  <- as.factor(data$Clase_Emision)
-  data$Zona           <- as.factor(data$Zona)
-  data$Puerto_0_Mar_1 <- as.factor(data$Puerto_0_Mar_1)
-  data$Cala           <- as.factor(data$Cala)
-  data$Primera_Cala   <- as.factor(data$Primera_Cala)
-  data$Cod_Viaje_VMS  <- as.factor(data$Cod_Viaje_VMS)
-  data$Cod_Viaje_Cruz <- as.factor(data$Cod_Viaje_Cruz)
-  data$Flota       <- as.factor(data$Flota)
-  data$Pesca_Viaje <- as.factor(data$Pesca_Viaje)
+  # data$date      <- as.POSIXct(strptime(as.character(data$Fecha_Matlab), format = "%Y-%m-%d %H:%M"))
+  # #data$date_GMT  <- as.POSIXct(data$date,tz='GMT')
+  # data$Cod_Barco <- as.factor(data$Cod_Barco)
+  # #data$Clase_Emision  <- as.factor(data$Clase_Emision)
+  # #data$Zona           <- as.factor(data$Zona)
+  # data$Puerto_0_Mar_1 <- as.factor(data$Puerto_0_Mar_1)
+  # data$Cala           <- as.factor(data$Cala)
+  # data$Primera_Cala   <- as.factor(data$Primera_Cala)
+  # data$Cod_Viaje_VMS  <- as.factor(data$Cod_Viaje_VMS)
+  # #data$Cod_Viaje_Cruz <- as.factor(data$Cod_Viaje_Cruz)
+  # data$Flota       <- as.factor(data$Flota)
+  # data$Pesca_Viaje <- as.factor(data$Pesca_Viaje)
+  #
+  # ## partimos del supuesto de que todos los viajes son de anchoveta y tienen máximo 2 horas entre emisiones consecutivas
+  # fechas <- unclass(as.POSIXlt(data$date))
+  # data$hora <- fechas$hour + fechas$min/60 + fechas$sec/3600
+  #
+  # # Para que la red no tenga problemas al interpretar las variables circulares de hora y cambio de rumbo
+  # # (por ejemplo, directamente no es capaz de reconocer que una distancia entre 23:00 h y 02:00 h es m�?nima, lo que igual sucede con los grados sexagesimales),
+  # # debe realizárseles una transformación.
+  # data$hora_transf <- cos(data$hora*pi/12)
+  # # Es la transformación realizada a la variable hora. Se escogió as�? porque
+  # # como las calas se realizan entre la mañana y la tarde, en horas más próximas a la medianoche tendrá valores cercanos a 0 y como al mediod�?a, valores próximos a -1.
+  # # De ese modo con la variable transformada la red estará en mayores condiciones de discriminar. (lo de cala y garrete)
+  #
+  # data$cambio_rumbo_transf <- cos(data$Cambio_Rumbo_Calc*pi/180)
+  # # es la transformación realizada a la variable cambio de rumbo. Esta vez no
+  # # se escogió la transformación por la distribución de frecuencias de la variable, sino por el criterio de que un mayor cambio de rumbo es un indicador de pesca y un menor cambio, de no pesca.
+  # # Entonces esta transformación coloca a los cambios mayores valores cercanos a 0 y a los cambios menores, valores cercanos a 1.
+  #
+  # cod_viajes <- unique(data$Cod_Viaje_VMS)
+  # #cod.viajes <- unique(data$Cod.Viaje.VMS)
+  #
+  # data$Change_Speed_1 <- rep(NA,dim(data)[1])
+  # data$Change_Speed_2 <- rep(NA,dim(data)[1])
+  # data$Acel_1 <- rep(NA,dim(data)[1])
+  # data$Acel_2 <- rep(NA,dim(data)[1])
+  # data$Cambio_Rumbo_Tiempo <- rep(NA,dim(data)[1])
+  #
+  #
+  # for (i in seq_along(cod_viajes)){
+  #   lignes <- which(data$Cod_Viaje_VMS == cod_viajes[i])
+  #
+  #   data$Change_Speed_1[lignes] <- c(NA,diff(data$Vel_Cal[lignes]))
+  #   data$Change_Speed_2[lignes] <- c(diff(data$Vel_Cal[lignes]),NA)
+  #   Dif_T_3 <- c(NA,data$Dif_Tiempo[lignes]) + c(data$Dif_Tiempo[lignes],NA)
+  #   data$Acel_1[lignes] <- data$Change_Speed_1[lignes]/Dif_T_3[1:(length(Dif_T_3)-1)]
+  #   data$Acel_2[lignes] <-  c(data$Acel_1[lignes[-1]],NA)
+  #   data$Cambio_Rumbo_Tiempo[lignes] <- data$cambio_rumbo_transf[lignes]/Dif_T_3[1:(length(Dif_T_3)-1)]
+  # }
 
-  ## partimos del supuesto de que todos los viajes son de anchoveta y tienen mÃ¡ximo 2 horas entre emisiones consecutivas
-  fechas <- unclass(as.POSIXlt(data$date))
-  data$hora <- fechas$hour + fechas$min/60 + fechas$sec/3600
+  #variables <- c("Dist_Emisiones","Vel_Cal","Change_Speed_1","Change_Speed_2","Acel_1","Acel_2","hora_transf",
+  #               "cambio_rumbo_transf","Cambio_Rumbo_Tiempo")
 
-  # Para que la red no tenga problemas al interpretar las variables circulares de hora y cambio de rumbo
-  # (por ejemplo, directamente no es capaz de reconocer que una distancia entre 23:00 h y 02:00 h es mÃ?nima, lo que igual sucede con los grados sexagesimales),
-  # debe realizÃ¡rseles una transformaciÃ³n.
-  data$hora_transf <- cos(data$hora*pi/12)
-  # Es la transformaciÃ³n realizada a la variable hora. Se escogiÃ³ asÃ? porque
-  # como las calas se realizan entre la maÃ±ana y la tarde, en horas mÃ¡s prÃ³ximas a la medianoche tendrÃ¡ valores cercanos a 0 y como al mediodÃ?a, valores prÃ³ximos a -1.
-  # De ese modo con la variable transformada la red estarÃ¡ en mayores condiciones de discriminar. (lo de cala y garrete)
-
-  data$cambio_rumbo_transf <- cos(data$Cambio_Rumbo_Calc*pi/180)
-  # es la transformaciÃ³n realizada a la variable cambio de rumbo. Esta vez no
-  # se escogiÃ³ la transformaciÃ³n por la distribuciÃ³n de frecuencias de la variable, sino por el criterio de que un mayor cambio de rumbo es un indicador de pesca y un menor cambio, de no pesca.
-  # Entonces esta transformaciÃ³n coloca a los cambios mayores valores cercanos a 0 y a los cambios menores, valores cercanos a 1.
-
-  cod_viajes <- unique(data$Cod_Viaje_VMS)
-  #cod.viajes <- unique(data$Cod.Viaje.VMS)
-
-  data$Change_Speed_1 <- rep(NA,dim(data)[1])
-  data$Change_Speed_2 <- rep(NA,dim(data)[1])
-  data$Acel_1 <- rep(NA,dim(data)[1])
-  data$Acel_2 <- rep(NA,dim(data)[1])
-  data$Cambio_Rumbo_Tiempo <- rep(NA,dim(data)[1])
-
-
-  for (i in seq_along(cod_viajes)){
-    lignes <- which(data$Cod_Viaje_VMS == cod_viajes[i])
-
-    data$Change_Speed_1[lignes] <- c(NA,diff(data$Vel_Cal[lignes]))
-    data$Change_Speed_2[lignes] <- c(diff(data$Vel_Cal[lignes]),NA)
-    Dif_T_3 <- c(NA,data$Dif_Tiempo[lignes]) + c(data$Dif_Tiempo[lignes],NA)
-    data$Acel_1[lignes] <- data$Change_Speed_1[lignes]/Dif_T_3[1:(length(Dif_T_3)-1)]
-    data$Acel_2[lignes] <-  c(data$Acel_1[lignes[-1]],NA)
-    data$Cambio_Rumbo_Tiempo[lignes] <- data$cambio_rumbo_transf[lignes]/Dif_T_3[1:(length(Dif_T_3)-1)]
-  }
-
-  variables <- c("Dist_Emisiones","Vel_Cal","Change_Speed_1","Change_Speed_2","Acel_1","Acel_2","hora_transf",
+  variables <- c("Dist_Emisiones","Vel.Cal","Change_Speed_1","Change_Speed_2","Acel_1","Acel_2","hora_transf",
                  "cambio_rumbo_transf","Cambio_Rumbo_Tiempo")
 
   ind_change_speed_1 <- which(is.na(data[,variables[3]]))
@@ -96,9 +75,9 @@ training_nnet <- function(data, directory, neurons = 4, loops = 50, thres_min = 
   data_scaled <- scale(data[,variables],center=TRUE,scale=TRUE)
 
 
-  covariables <- c("Nombre_Barco","Cod_Barco","Lon","Lat","Puerto_0_Mar_1","Dist_Puerto","Dif_Tiempo",
+  covariables <- c("Name_vessel","Cod_Barco","Lon","Lat","Puerto_0_Mar_1","Dist_Harbor","Time",#"Dif_Tiempo",
                    "Lon_Obs_Ini_Cala","Lat_Obs_Ini_Cala","Cala","Primera_Cala","Dist_Cala_Emis","Cod_Viaje_VMS",
-                   "Cod_Viaje_Cruz","Flota","Pesca_Viaje","date","date_GMT")
+                   "date")
   data_scaled <- cbind(data[,covariables],data_scaled)
 
   N = log(1-0.95)/log(1-0.1)
@@ -161,12 +140,11 @@ training_nnet <- function(data, directory, neurons = 4, loops = 50, thres_min = 
         #                      Cambio_Rumbo_Tiempo, data=training_set, size=neurons, softmax=TRUE,
         #                    trace = FALSE)
 
-        nets[[rep]] = nnet(formula = Cala_nnet ~ Vel_Cal + Acel_1 + Acel_2 + hora_transf +
-                      Cambio_Rumbo_Tiempo, data = training_set,size = neurons,
-                      linout = linout, entropy = entropy, softmax=softmax,
-                      censored = censored, skip = skip, rang = rang, decay = decay,
-                      maxit = maxit, Hess = Hess, trace = trace, MaxNWts = MaxNWts,
-                      abstol = abstol, reltol = reltol)
+        nets[[rep]] = nnet(formula = formula, data = training_set,size = neurons,
+                           linout = linout, entropy = entropy, softmax=softmax,
+                           censored = censored, skip = skip, rang = rang, decay = decay,
+                           maxit = maxit, Hess = Hess, trace = trace, MaxNWts = MaxNWts,
+                           abstol = abstol, reltol = reltol)
 
         sse[rep] = sum(nets[[rep]]$residuals^2)
         #       aic[rep] = dim(training.set)[1]*log(sse[rep]/dim(training.set)[1]) + 2*length(nets[[rep]]$wts)
@@ -250,7 +228,7 @@ training_nnet <- function(data, directory, neurons = 4, loops = 50, thres_min = 
           comparacion[6,ii] <- comparacion[2,ii] - comparacion[1,ii]
           test_perf[6,ii] <- CM[1,2] # falsos negativos
           test_perf[14,ii] <- (CM[1,1]+CM[2,2])/sum(CM)
-          test_perf[7,ii] <- min(CM[2,1],CM[1,2]) # nÃºmero de calas mal ubicadas
+          test_perf[7,ii] <- min(CM[2,1],CM[1,2]) # número de calas mal ubicadas
         }else{
           test_perf[1,ii] <- CM[1,2]+0 # calas observadas
           test_perf[2,ii] <- 0 # calas identificadas
@@ -262,7 +240,7 @@ training_nnet <- function(data, directory, neurons = 4, loops = 50, thres_min = 
           comparacion[6,ii] <- comparacion[2,ii] - comparacion[1,ii]
           test_perf[6,ii] <- CM[1,2] # falsos negativos
           test_perf[14,ii] <- (CM[1,1]+0)/sum(CM)
-          test_perf[7,ii] <- min(0,CM[1,2]) # nÃºmero de calas mal ubicadas
+          test_perf[7,ii] <- min(0,CM[1,2]) # número de calas mal ubicadas
         }
         writeLines("")
         print(paste("MSE of the tested partition: ", round(test_perf[5,ii],3),sep=""))
@@ -286,13 +264,13 @@ training_nnet <- function(data, directory, neurons = 4, loops = 50, thres_min = 
     train_perf[7,] <- train_perf[3,]/train_perf[1,] # proporcion de calas verdaderas respecto a las observadas
     train_perf[8,] <- train_perf[4,]/train_perf[1,] # proporcion de calas falsas respecto a las observadas
     train_perf[9,] <- train_perf[6,]/train_perf[1,] # proporcion de falsos negativos respecto a las calas observadas
-    train_perf[10,] <- (train_perf[2,] - train_perf[1,])/train_perf[1,] # ratio de la diferencia entre nÃºmero de calas identificadas y observadas, respecto al nÃºmero de calas observadas
-    test_perf[8,] <- test_perf[2,] - test_perf[1,] # diferencia entre nÃºmero de calas observadas e identificadas
+    train_perf[10,] <- (train_perf[2,] - train_perf[1,])/train_perf[1,] # ratio de la diferencia entre número de calas identificadas y observadas, respecto al número de calas observadas
+    test_perf[8,] <- test_perf[2,] - test_perf[1,] # diferencia entre número de calas observadas e identificadas
     test_perf[9,] <- test_perf[3,]/test_perf[1,] # proporcion de calas verdaderas respecto a las observadas
     test_perf[10,] <- test_perf[4,]/test_perf[1,] # proporcion de calas falsas respecto a las observadas
     test_perf[11,] <- test_perf[6,]/test_perf[1,] # proporcion de falsos negativos respecto a las calas observadas
-    test_perf[12,] <- (test_perf[2,] - test_perf[1,])/test_perf[1,] # ratio de la diferencia entre nÃºmero de calas identificadas y observadas, respecto al nÃºmero de calas observadas
-    test_perf[13,] <- test_perf[7,]/test_perf[1,] # proporcion de calas mal ubicadas respecto al nÃºmero de calas observadas
+    test_perf[12,] <- (test_perf[2,] - test_perf[1,])/test_perf[1,] # ratio de la diferencia entre número de calas identificadas y observadas, respecto al número de calas observadas
+    test_perf[13,] <- test_perf[7,]/test_perf[1,] # proporcion de calas mal ubicadas respecto al número de calas observadas
     prom_train <- apply(train_perf,1,mean,na.rm=TRUE)
     prom_test <- apply(test_perf,1,mean,na.rm=TRUE)
     prom_comp <- apply(comparacion,1,mean,na.rm=TRUE)
@@ -336,8 +314,7 @@ training_nnet <- function(data, directory, neurons = 4, loops = 50, thres_min = 
         #                      Cambio_Rumbo_Tiempo,data=training_set,size=neurons,softmax=TRUE,
         #                    trace = FALSE)
 
-        nets[[rep]] = nnet(formula = Cala_nnet ~ Vel_Cal + Acel_1 + Acel_2 + hora_transf +
-                             Cambio_Rumbo_Tiempo, data = training_set,size = neurons,
+        nets[[rep]] = nnet(formula = formula, data = training_set,size = neurons,
                            linout = linout, entropy = entropy, softmax=softmax,
                            censored = censored, skip = skip, rang = rang, decay = decay,
                            maxit = maxit, Hess = Hess, trace = trace, MaxNWts = MaxNWts,
@@ -424,7 +401,7 @@ training_nnet <- function(data, directory, neurons = 4, loops = 50, thres_min = 
           comparacion[6,ii] <- comparacion[2,ii] - comparacion[1,ii]
           test_perf[6,ii] <- CM[1,2] # falsos negativos
           test_perf[14,ii] <- (CM[1,1]+CM[2,2])/sum(CM)
-          test_perf[7,ii] <- min(CM[2,1],CM[1,2]) # nÃºmero de calas mal ubicadas
+          test_perf[7,ii] <- min(CM[2,1],CM[1,2]) # número de calas mal ubicadas
         }else{
           test_perf[1,ii] <- CM[1,2]+0 # calas observadas
           test_perf[2,ii] <- 0 # calas identificadas
@@ -436,7 +413,7 @@ training_nnet <- function(data, directory, neurons = 4, loops = 50, thres_min = 
           comparacion[6,ii] <- comparacion[2,ii] - comparacion[1,ii]
           test_perf[6,ii] <- CM[1,2] # falsos negativos
           test_perf[14,ii] <- (CM[1,1]+0)/sum(CM)
-          test_perf[7,ii] <- min(0,CM[1,2]) # nÃºmero de calas mal ubicadas
+          test_perf[7,ii] <- min(0,CM[1,2]) # número de calas mal ubicadas
         }
         writeLines("")
         print(paste("MSE of the tested partition: ", round(test_perf[5,ii],3),sep=""))
@@ -460,13 +437,13 @@ training_nnet <- function(data, directory, neurons = 4, loops = 50, thres_min = 
     train_perf[7,] <- train_perf[3,]/train_perf[1,] # proporcion de calas verdaderas respecto a las observadas
     train_perf[8,] <- train_perf[4,]/train_perf[1,] # proporcion de calas falsas respecto a las observadas
     train_perf[9,] <- train_perf[6,]/train_perf[1,] # proporcion de falsos negativos respecto a las calas observadas
-    train_perf[10,] <- (train_perf[2,] - train_perf[1,])/train_perf[1,] # ratio de la diferencia entre nÃºmero de calas identificadas y observadas, respecto al nÃºmero de calas observadas
-    test_perf[8,] <- test_perf[2,] - test_perf[1,] # diferencia entre nÃºmero de calas identificadas y observadas
+    train_perf[10,] <- (train_perf[2,] - train_perf[1,])/train_perf[1,] # ratio de la diferencia entre número de calas identificadas y observadas, respecto al número de calas observadas
+    test_perf[8,] <- test_perf[2,] - test_perf[1,] # diferencia entre número de calas identificadas y observadas
     test_perf[9,] <- test_perf[3,]/test_perf[1,] # proporcion de calas verdaderas respecto a las observadas
     test_perf[10,] <- test_perf[4,]/test_perf[1,] # proporcion de calas falsas respecto a las observadas
     test_perf[11,] <- test_perf[6,]/test_perf[1,] # proporcion de falsos negativos respecto a las calas observadas
-    test_perf[12,] <- (test_perf[2,] - test_perf[1,])/test_perf[1,] # ratio de la diferencia entre nÃºmero de calas identificadas y observadas, respecto al nÃºmero de calas observadas
-    test_perf[13,] <- test_perf[7,]/test_perf[1,] # proporcion de calas mal ubicadas respecto al nÃºmero de calas observadas
+    test_perf[12,] <- (test_perf[2,] - test_perf[1,])/test_perf[1,] # ratio de la diferencia entre número de calas identificadas y observadas, respecto al número de calas observadas
+    test_perf[13,] <- test_perf[7,]/test_perf[1,] # proporcion de calas mal ubicadas respecto al número de calas observadas
 
     prom_train <- apply(train_perf,1,mean,na.rm=TRUE)
     prom_test <- apply(test_perf,1,mean,na.rm=TRUE)
@@ -599,7 +576,7 @@ training_nnet <- function(data, directory, neurons = 4, loops = 50, thres_min = 
   cat("\n")
   cat("percentage of overidentified sets: ", round(prom_train[10]*100,2), "% (", round(left_train[10]*100,2), "%," , round(right_train[10]*100,2), "%)")
   cat("\n")
-  # cat("NÃºmero de calas sobreidentificadas: ", prom.test[8])
+  # cat("Número de calas sobreidentificadas: ", prom.test[8])
   cat("percentage of observed sets: ", round(prom_comp[1],2), "% (", round(left_comp[1],2), "%," , round(right_comp[1],2), "%)")
   cat("\n")
   cat("number of observed sets: ", prom_train[1], " (", round(left_train[1],2), "," , round(right_train[1],2), ")")
