@@ -132,7 +132,7 @@ predict_sets <- function(data = data, directory = getwd(), thres = 0.51, neurons
   predichas <- matrix(NA,nrow=dim(data_scaled)[1],ncol=loops)
   for (ii in 1:loops){
 
-    namefile = system.file("result_nnet", paste0("ann_year_loop_",ii,"_neurons_4.RData"),package = "tasaR")
+    namefile = system.file("result_nnet", paste0("ann_year_loop_",ii,"_neurons_4.RData"),package = "vmsR")
     #namefile = paste0(directory,"/result_nnet/ann_year_loop_",ii,"_neurons_",neurons)
     #load(file = paste0(namefile, ".RData"))
     load(namefile)
@@ -153,17 +153,17 @@ predict_sets <- function(data = data, directory = getwd(), thres = 0.51, neurons
 }
 
 ### identify_cala
-identify_set <- function(data = data, thres = 0.51, loops = 10, freq_vms = "low"){
+identify_set <- function(data = data, thres = 0.51, loops = 10, freq_vms = "low", namefile = NULL){
 
   if(freq_vms == "high"){
     data_sel   <- seleccionar_vms(data)
-    data_sel   <- predict_sets(data = data_sel, thres = thres, loops = loops)
+    data_sel   <- predict_sets2(data = data_sel, thres = thres, loops = loops, namefile = namefile)
     data_sel   <- validacion_cala(data = data_sel)
     output     <- match_vms(data = data, new_data = data_sel)
   }
   if(freq_vms == "low"){
     data$match <- 0
-    data_sel   <- predict_sets(data = data, thres = thres, loops = loops)
+    data_sel   <- predict_sets2(data = data, thres = thres, loops = loops, namefile = namefile)
 
     nameVMS <- c("Cod_Barco", "Name_vessel", "Date","Lon", "Lat", "Vel_VMS", "Course"
       ,"Harbor","Dist_Harbor","Time", "Dist_Emisiones", "Vel.Cal", "Rumbo_Calc", "Cambio_Rumbo_Calc",

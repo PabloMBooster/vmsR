@@ -64,8 +64,8 @@ training_nnet <- function(data, directory, formula, neurons = 4, loops = 50, thr
   #variables <- c("Dist_Emisiones","Vel_Cal","Change_Speed_1","Change_Speed_2","Acel_1","Acel_2","hora_transf",
   #               "cambio_rumbo_transf","Cambio_Rumbo_Tiempo")
 
-  variables <- c("Dist_Emisiones","Vel.Cal","Change_Speed_1","Change_Speed_2","Acel_1","Acel_2","hora_transf",
-                 "cambio_rumbo_transf","Cambio_Rumbo_Tiempo")
+  variables <- c("Dist_Emisiones","Vel.Cal","Change_Speed_1","Change_Speed_2","Acel.1","Acel.2","hora.transf",
+                 "cambio_rumbo_transf","Cambio.Rumbo.Tiempo")
 
   ind_change_speed_1 <- which(is.na(data[,variables[3]]))
   ind_change_speed_2 <- which(is.na(data[,variables[4]]))
