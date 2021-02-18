@@ -65,20 +65,16 @@ predict_sets2 <- function(data = data, directory = getwd(), thres = 0.51, neuron
   for (ii in 1:loops){
 
     if(is.null(namefile)){
-      namefile = system.file("result_nnet", paste0("ann_year_loop_",ii,"_neurons_4.RData"),package = "vmsR")
-      load(namefile)
+      nnet_file = system.file("result_nnet", paste0("ann_year_loop_",ii,"_neurons_4.RData"),package = "vmsR")
+      load(nnet_file)
       predicted <- predict(best.net,data_scaled)
       predichas[,ii] <- predicted[,2]
     }else{
-      namefile = paste0(namefile, paste0("ann_year_loop_",ii,"_neurons_4.RData"))
-      load(namefile)
+      nnet_file = paste0(namefile, paste0("ann_year_loop_",ii,"_neurons_4.RData"))
+      load(nnet_file)
       predicted <- predict(best_net,data_scaled)
       predichas[,ii] <- predicted[,2]
     }
-
-    # load(namefile)
-    # predicted <- predict(best.net,data_scaled)
-    # predichas[,ii] <- predicted[,2]
 
   }
   sets <- as.numeric(apply(predichas,1,mean) > thres)
