@@ -80,7 +80,7 @@ predict_sets2 <- function(data = data, directory = getwd(), thres = 0.51, neuron
   sets <- as.numeric(apply(predichas,1,mean) > thres)
 
   data0$id_calas[-c(ind_change_speed_1,ind_change_speed_2)] <- sets
-
+  data0$id_calas[is.na(data0$id_calas)] <- 0 ## ><> en que casos da NA sin considerar el zarpe y el arribo
   data0 <- posiciones_cala(data0)
   data0 <- validacion_cala(data0)
   return(data0)

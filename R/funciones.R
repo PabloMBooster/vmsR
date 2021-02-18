@@ -162,12 +162,12 @@ por_viaje <- function(data){
       puerto_arribo    <- x$Harbor[length(x$Harbor)]
       fecha_zarpe      <- x$Date[1]
       fecha_arribo     <- x$Date[length(x$Date)]
-      duracion         <- sum(x$Time, na.rm = T)#as.numeric(difftime(time1 = x$Date[length(x$Date)], time2 = x$Date[1], units = "hours"))
+      duracion         <- difftime(time1 = x$Date[length(x$Date)], time2 = x$Date[1], units = "hours") #sum(x$Time, na.rm = T)
       recorrido        <- sum(x$Dist_Emisiones, na.rm = T)
       dist_costa_max   <- max(x$dist_costa, na.rm = T)
       dist_costa_pesca <- mean(x$dist_costa[x$calas == 1], na.rm = T)
-      maxDist_zarpe    <- max(dist_ortodromica(x1 = x$Lon[1],y1 = x$Lat[1],x2 = x$Lon,y2 = x$Lon))
-      maxDist_arribo   <- max(dist_ortodromica(x1 = x$Lon[length(x$Lon)],y1 = x$Lat[length(x$Lon)],x2 = x$Lon,y2 = x$Lon))
+      maxDist_zarpe    <- max(dist_ortodromica(x1 = x$Lon[1],y1 = x$Lat[1],x2 = x$Lon,y2 = x$Lat))
+      maxDist_arribo   <- max(dist_ortodromica(x1 = x$Lon[length(x$Lon)],y1 = x$Lat[length(x$Lon)],x2 = x$Lon,y2 = x$Lat))
       sinuosidad       <- recorrido/(maxDist_zarpe+maxDist_arribo)
       course_zarpe     <- x$Course[1]
       course_arribo    <- x$Course[length(x$Course)]
@@ -212,12 +212,12 @@ por_viaje <- function(data){
       puerto_arribo    <- x$Harbor[length(x$Harbor)]
       fecha_zarpe      <- x$Date[1]
       fecha_arribo     <- x$Date[length(x$Date)]
-      duracion         <- sum(x$Time, na.rm = T)#as.numeric(difftime(time1 = x$Date[length(x$Date)], time2 = x$Date[1], units = "hours"))
-      recorrido        <- sum(x$Dist_Emisiones, na.rm = T)
+      duracion         <- difftime(time1 = x$Date[length(x$Date)], time2 = x$Date[1], units = "hours") #sum(x$Time, na.rm = T)
+      recorrido        <- sum(x$Dist_Emisiones[-1], na.rm = T)
       dist_costa_max   <- max(x$dist_costa, na.rm = T)
       dist_costa_pesca <- 0
-      maxDist_zarpe    <- max(dist_ortodromica(x1 = x$Lon[1],y1 = x$Lat[1],x2 = x$Lon,y2 = x$Lon))
-      maxDist_arribo   <- max(dist_ortodromica(x1 = x$Lon[length(x$Lon)],y1 = x$Lat[length(x$Lon)],x2 = x$Lon,y2 = x$Lon))
+      maxDist_zarpe    <- max(dist_ortodromica(x1 = x$Lon[1],y1 = x$Lat[1],x2 = x$Lon,y2 = x$Lat))
+      maxDist_arribo   <- max(dist_ortodromica(x1 = x$Lon[length(x$Lon)],y1 = x$Lat[length(x$Lon)],x2 = x$Lon,y2 = x$Lat))
       sinuosidad       <- recorrido/(maxDist_zarpe+maxDist_arribo)
       course_zarpe     <- x$Course[1]
       course_arribo    <- x$Course[length(x$Course)]

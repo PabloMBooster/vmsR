@@ -89,7 +89,7 @@ identify_trip <- function(data = data, dharbor = 2, rmin = 6,
       if(min(y$Time)==0){ # time equals 0
         x$mistake <- 1 #has some error in time
       }
-      if(min(y$Time) > hmax){ # umbral maximun time
+      if(max(y$Time) > hmax){ # umbral maximun time
         x$mistake <- 1 #has some error in time
       }
       if(min(y$Vel.Cal[-length(y$Vel.Cal)]) > vmin){ # umbral minimun velocity

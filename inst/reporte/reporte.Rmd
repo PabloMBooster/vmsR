@@ -19,14 +19,13 @@ library(tmap)    # for static and interactive maps
 library(leaflet) # for interactive maps
 library(mapview) # for interactive maps
 library(ggplot2) # tidyverse vis package
-library(shiny)   # for web applications
+#library(shiny)   # for web applications
 library(sp)    # distancia costa
 library(rgeos) # distancia costa
 library(dplyr) # manejos de datos
-library(nnet)  # red neuronal
+#library(nnet)  # red neuronal
 library(shape) # mapa_vms
 library(lubridate) # manejo de fechas
-library(tasaR) # vms
 #library(ineq)
 library(DT) # reporte
 library(maps) # mapa
@@ -36,7 +35,7 @@ library(data.table) # formato tm
 
 #source("funciones.R")
   #load("C:/Users/fenix/Documents/sisesat/output.RData")
-
+  datos_vms$Name_Vessel <- datos_vms$Name_vessel
   index1 <- indicadores1(data = datos_vms)
   index2 <- indicadores2(data = datos_vms)
   #index_totales <- merge(index1, index2, by = "fecha")
@@ -61,37 +60,37 @@ library(data.table) # formato tm
   tm_bubbles("lance", col = "grey30", scale=.05) 
   
    # generamos segundo mapa areas iso
-  area <- area_isoparalitoral(dist_costa = datos_plot$dist_costa, latitude = datos_plot$Lat)
-  area_iso   <- area$area[!is.na(area$area)]
-  datos_plot <- datos_plot[!is.na(area$area),]
+  # area <- area_isoparalitoral(dist_costa = datos_plot$dist_costa, latitude = datos_plot$Lat)
+  # area_iso   <- area$area[!is.na(area$area)]
+  # datos_plot <- datos_plot[!is.na(area$area),]
   
-  centro_areaIso <- centroidAssigner(code = area_iso, what = "isoparalitoral")
-  datos_plot$areaIso <- centro_areaIso$code
-  datos_plot$Lon_areaIso <- centro_areaIso$lon
-  datos_plot$Lat_areaIso <- centro_areaIso$lat
+  # centro_areaIso <- centroidAssigner(code = area_iso, what = "isoparalitoral")
+  # datos_plot$areaIso <- centro_areaIso$code
+  # datos_plot$Lon_areaIso <- centro_areaIso$lon
+  # datos_plot$Lat_areaIso <- centro_areaIso$lat
   
 
-  areaIso_lonlat      <- lapply(split(datos_plot, datos_plot$areaIso, drop = TRUE),function(x){
-    areaIso <- x$areaIso
-    lon     <- x$Lon_areaIso
-    lat     <- x$Lat_areaIso
-    num_lances <- length(x$areaIso)
-    
-    cbind.data.frame(areaIso, lon, lat, num_lances)
-  })
+  # areaIso_lonlat      <- lapply(split(datos_plot, datos_plot$areaIso, drop = TRUE),function(x){
+  #   areaIso <- x$areaIso
+  #   lon     <- x$Lon_areaIso
+  #   lat     <- x$Lat_areaIso
+  #   num_lances <- length(x$areaIso)
+  #   
+  #   cbind.data.frame(areaIso, lon, lat, num_lances)
+  # })
 
-  areaIso_lonlat <- areaIso_lonlat %>% lapply(data.frame) %>% bind_rows()
+  # areaIso_lonlat <- areaIso_lonlat %>% lapply(data.frame) %>% bind_rows()
 
-  DT2 <- data.table(areaIso_lonlat)
-  DT_sf2 = st_as_sf(DT2, coords = c("lon", "lat"), 
-                 crs = 4326, agr = "constant")
+  # DT2 <- data.table(areaIso_lonlat)
+  # DT_sf2 = st_as_sf(DT2, coords = c("lon", "lat"), 
+  #                crs = 4326, agr = "constant")
   
-  map_per2 = tm_shape(shape) + 
-  tm_borders(col = "gray", lwd = 2) +
-  tm_shape(DT_sf2) + 
-  tm_symbols(size = "num_lances", title.col="Numero de lances",  col="num_lances", #shape="num_lances"
-  legend.format = list(text.align="right", text.to.columns = TRUE)) +
-  tm_legend(outside = TRUE, outside.position = "bottom", stack = "horizontal")
+  #map_per2 = tm_shape(shape) + 
+  #tm_borders(col = "gray", lwd = 2) +
+  #tm_shape(DT_sf2) + 
+  #tm_symbols(size = "num_lances", title.col="Numero de lances",  col="num_lances", #shape="num_lances"
+  #legend.format = list(text.align="right", text.to.columns = TRUE)) +
+  #tm_legend(outside = TRUE, outside.position = "bottom", stack = "horizontal")
 ```
 1. Esfuerzo pesquero
 ```{r index1, echo=FALSE}
@@ -135,9 +134,9 @@ datatable(index2, extensions = 'Buttons', options = list(
 tmap_mode("view")
 map_per 
 ```
-4. Lances de pesca por areas isoparalitorales
+<!-- 4. Lances de pesca por areas isoparalitorales -->
 
-```{r maps2, echo=FALSE, fig.align="center",fig.height=8, fig.width=8, out.width="9.5in", warning=FALSE, message=FALSE}
-tmap_mode("view")
-map_per2 
-```
+<!-- ```{r maps2, echo=FALSE, fig.align="center",fig.height=8, fig.width=8, out.width="9.5in", warning=FALSE, message=FALSE} -->
+<!-- tmap_mode("view") -->
+<!-- map_per2  -->
+<!-- ``` -->
