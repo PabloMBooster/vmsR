@@ -47,7 +47,7 @@ library(data.table) # formato tm
   datos_plot <- datos_vms[!is.na(datos_vms$Lon_calas), c("Name_Vessel",  "Date", "Lon_calas",                                                               "Lat_calas", "dist_costa")]
   datos_plot$fecha <- format(datos_plot$Date, format = "%Y-%m-%d")
   datos_plot$lance <- 1
-  datos_plot$Name_Vessel <- paste0("Tasa ", datos_plot$Name_Vessel, " ",datos_plot$Date," (", ... =   round(datos_plot$Lon_calas,3),";", round(datos_plot$Lat_calas,3),")")
+  datos_plot$Name_Vessel <- paste0(datos_plot$Name_Vessel, " ",datos_plot$Date," (", ... =   round(datos_plot$Lon_calas,3),";", round(datos_plot$Lat_calas,3),")")
   datos_plot <- datos_plot[, c("Name_Vessel",  "fecha", "lance","Lon_calas",                                                               "Lat_calas", "dist_costa")]
   DT <- data.table(datos_plot)
   DT_sf = st_as_sf(DT, coords = c("Lon_calas", "Lat_calas"), 

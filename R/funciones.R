@@ -166,8 +166,8 @@ por_viaje <- function(data){
       recorrido        <- sum(x$Dist_Emisiones, na.rm = T)
       dist_costa_max   <- max(x$dist_costa, na.rm = T)
       dist_costa_pesca <- mean(x$dist_costa[x$calas == 1], na.rm = T)
-      maxDist_zarpe    <- max(dist_ortodromica(x1 = x$Lon[1],y1 = x$Lat[1],x2 = x$Lon,y2 = x$Lat))
-      maxDist_arribo   <- max(dist_ortodromica(x1 = x$Lon[length(x$Lon)],y1 = x$Lat[length(x$Lon)],x2 = x$Lon,y2 = x$Lat))
+      maxDist_zarpe    <- max(dist_ortodromica(x1 = x$Lon[1],y1 = x$Lat[1],x2 = x$Lon,y2 = x$Lat),na.rm = T)
+      maxDist_arribo   <- max(dist_ortodromica(x1 = x$Lon[length(x$Lon)],y1 = x$Lat[length(x$Lon)],x2 = x$Lon,y2 = x$Lat),na.rm = T)
       sinuosidad       <- recorrido/(maxDist_zarpe+maxDist_arribo)
       course_zarpe     <- x$Course[1]
       course_arribo    <- x$Course[length(x$Course)]
@@ -216,8 +216,8 @@ por_viaje <- function(data){
       recorrido        <- sum(x$Dist_Emisiones[-1], na.rm = T)
       dist_costa_max   <- max(x$dist_costa, na.rm = T)
       dist_costa_pesca <- 0
-      maxDist_zarpe    <- max(dist_ortodromica(x1 = x$Lon[1],y1 = x$Lat[1],x2 = x$Lon,y2 = x$Lat))
-      maxDist_arribo   <- max(dist_ortodromica(x1 = x$Lon[length(x$Lon)],y1 = x$Lat[length(x$Lon)],x2 = x$Lon,y2 = x$Lat))
+      maxDist_zarpe    <- max(dist_ortodromica(x1 = x$Lon[1],y1 = x$Lat[1],x2 = x$Lon,y2 = x$Lat),na.rm = T)
+      maxDist_arribo   <- max(dist_ortodromica(x1 = x$Lon[length(x$Lon)],y1 = x$Lat[length(x$Lon)],x2 = x$Lon,y2 = x$Lat),na.rm = T)
       sinuosidad       <- recorrido/(maxDist_zarpe+maxDist_arribo)
       course_zarpe     <- x$Course[1]
       course_arribo    <- x$Course[length(x$Course)]
@@ -239,7 +239,7 @@ por_viaje <- function(data){
     }
     cbind.data.frame(Cod_Barco, Name_Vessel,  fecha_zarpe, fecha_arribo, puerto_zarpe, puerto_arribo,
                      duracion, recorrido, maxDist_zarpe, maxDist_arribo,dist_costa_max, dist_costa_pesca, num_lances, tiempo_entre_calas, vel_max,
-                     lat_max, lat_min, lon_max, lon_min, course_zarpe, course_arribo, sinuosidad)
+                     lat_max, lat_min, lon_max, lon_min, course_zarpe, course_arribo, sinuosidad, recorrido_cala_a_cala)
     #as.data.frame(data_vessel)
   })
   suppressWarnings({data_viaje <- data_viaje %>% lapply(as.data.frame) %>% bind_rows()})
