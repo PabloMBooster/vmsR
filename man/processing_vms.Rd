@@ -5,11 +5,11 @@
 %%  ~~function to do ... ~~
 }
 \description{
-The \code{processing_vms} automatically pre-processes vms data. The vms data must contain a vessel identifier variable (Cod_vessel or Name_vessel), a variable in date format (year, month, day and time), and the position variables (latitude and longitude) in decimal degrees.
+The \code{processing_vms} automatically pre-processes raw VMS data. The VMS data must contain a vessel identifier variable (Cod_vessel or Name_vessel), a variable in date format (year, month, day and time), and the position variables (latitude and longitude) in decimal degrees.
 
-The processing of the vms data consists of: sorting the VMS data by vessel and date; calculate the distance between each vms emission (orthodromic distance); calculate the distance from each emission to the nearest port; calculate the speed of the vessel at each time step; calculate the elapsed time in hours at each time instant; calculate course and change of course.
+The processing of the VMS data consists of: sorting the VMS data by vessel and date; calculate the distance between each VMS emission (orthodromic distance); calculate the distance from each emission to the nearest port; calculate the speed of the vessel at each time step; calculate the elapsed time in hours at each time instant; calculate course and change of course.
 
-Distance variables are expressed in nautical miles, speed in miles/hour, course and course change in decimal degrees.
+Distance variables are expressed in nautical miles, vessel speed in miles/hour, course and course change in decimal degrees.
 
 
 }
@@ -19,7 +19,7 @@ processing_vms(data, vessel = "num_vessel", harbor)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{data}{
-data raw of the vessel monitoring system
+raw VMS data
 }
   \item{vessel}{
 

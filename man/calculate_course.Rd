@@ -7,7 +7,7 @@ Course of the vessel
 \description{
 \code{calculate_course} internally uses the \code{atan2} function to calculate the vessel's course (angle), then the \%\% operator is used to standardize the angle to 360 degrees. Then, the obtained angle is multiplied by 180/pi to convert the response in radians (the default output of atan2) to degrees.
 
-Up to this point, the angle obtained is based on the standard trigonometric form where "East" = 0 degrees. So, it is necessary to scale the obtained angle to the navigation scale where "North" = 0. This is obtained by subtracting our obtained angle with the 90 degrees angle.
+The angle obtained is based on the standard trigonometric form where "East" = 0 degrees. So, it is necessary to scale the obtained angle to the navigation scale where "North" = 0. This is obtained by subtracting our obtained angle with the 90 degrees angle.
 }
 \usage{
 calculate_course(x, y)
