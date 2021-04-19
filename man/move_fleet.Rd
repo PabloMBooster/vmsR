@@ -1,41 +1,37 @@
-\name{map_vms}
-\alias{map_vms}
+\name{move_fleet}
+\alias{move_fleet}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-map VMS
+move fleet
 }
 \description{
-draws the trajectory of a fishing trip
+Generates a fleet movement map in giff format. Trip trajectory data must be interpolated at a constant time step.
 }
 \usage{
-map_vms(x = x, y = y, velocity = velocity, xlab = "LONGITUDE", ylab = "LATITUDE", text.lab = FALSE, legend_vel = FALSE, file_harbor = NULL)
+move_fleet(data_inte = data_inte, xlim = c(-86, -70), lwdArrows = 1, ylim = c(-21, -3), interval = 0.9, movie.name = "movie.gif", nmax = 50, file_harbor = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{
-longitude
+  \item{data_inte}{
+interpolated trip trajectory data
 }
-  \item{y}{
-latitude
+  \item{xlim, ylim}{
+numeric vectors of length 2, giving the x and y coordinates ranges}
+  \item{lwdArrows}{
+arrow width
 }
-  \item{velocity}{
-vessel's speed
+  \item{interval}{
+animation time, default is 0.8 seconds
 }
-  \item{xlab}{
-x-axis label
+  \item{movie.name}{
+file name of the movie
 }
-  \item{ylab}{
-y-axis label
+  \item{nmax}{
+maximum number of images, default is 50
 }
   \item{file_harbor}{
 file containing latitude and longitude of the ports
 }
-  \item{text.lab}{
-text label
-}  \item{legend_vel}{
-legends of speed
-}
-
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
@@ -51,7 +47,7 @@ legends of speed
 %% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
+Pablo Marin
 }
 \note{
 %%  ~~further notes~~

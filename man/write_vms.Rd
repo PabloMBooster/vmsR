@@ -1,41 +1,29 @@
-\name{map_vms}
-\alias{map_vms}
+\name{write_vms}
+\alias{write_vms}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-map VMS
+Write VMS
 }
 \description{
-draws the trajectory of a fishing trip
+saves the processed vms data
 }
 \usage{
-map_vms(x = x, y = y, velocity = velocity, xlab = "LONGITUDE", ylab = "LATITUDE", text.lab = FALSE, legend_vel = FALSE, file_harbor = NULL)
+write_vms(data, directorio = NULL, file = NULL, file_harbor = NULL)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{
-longitude
+  \item{data}{
+dataset
 }
-  \item{y}{
-latitude
+  \item{directorio}{
+Set Working Directory
 }
-  \item{velocity}{
-vessel's speed
-}
-  \item{xlab}{
-x-axis label
-}
-  \item{ylab}{
-y-axis label
+  \item{file}{
+file name
 }
   \item{file_harbor}{
 file containing latitude and longitude of the ports
 }
-  \item{text.lab}{
-text label
-}  \item{legend_vel}{
-legends of speed
-}
-
 }
 \details{
 %%  ~~ If necessary, more details than the description above ~~
@@ -51,7 +39,7 @@ legends of speed
 %% ~put references to the literature/web site here ~
 }
 \author{
-%%  ~~who you are~~
+Pablo Marin
 }
 \note{
 %%  ~~further notes~~

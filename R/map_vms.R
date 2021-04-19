@@ -1,5 +1,5 @@
 map_vms <- function(x = x, y = y, velocity = velocity, xlab = "LONGITUDE", #text.lab = NULL,
-                   ylab = "LATITUDE",  line_map = peruXY, text.lab = FALSE, legend_vel = FALSE){
+                   ylab = "LATITUDE", text.lab = FALSE, legend_vel = FALSE, file_harbor = NULL){
   require(shape)
   require(geoR)
 
@@ -37,7 +37,16 @@ map_vms <- function(x = x, y = y, velocity = velocity, xlab = "LONGITUDE", #text
   y2 <- y0[-1]
 
   plot(x0, y0,  type = "l", xlim = xlim, ylim = ylim, ylab = ylab, xlab = xlab)
-  lines(line_map)
+  map(xlim = xlim, ylim = ylim, fill = TRUE, col = "khaki1", lty = 0, add = T)
+  map(xlim = xlim, ylim = ylim, fill = FALSE, interior = TRUE, col = 1, add = TRUE)
+  box()
+
+  if(!is.null(file_harbor)){
+    text(x = file_harbor$lon,
+         y = file_harbor$lat,
+         labels = as.character(file_harbor$harbor), col = 4)
+  }
+
   Arrows(x1, y1, x2, y2, arr.type = "curved", code = 2,lty = 1,
          arr.length = 0.2, arr.adj = 1, col = velCol(velocity))
    if(isTRUE(text.lab)){

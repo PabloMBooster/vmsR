@@ -1,4 +1,4 @@
-write_vms <- function(data, directorio = NULL, file = NULL, ...){
+write_vms <- function(data, directorio = NULL, file = NULL, file_harbor = NULL){
 
   if(is.null(file)){
     file = paste0("resultados_",substring(Sys.time(),1,10))
@@ -43,9 +43,12 @@ write_vms <- function(data, directorio = NULL, file = NULL, ...){
       legend("bottomleft", legend = c("Velocidad \n (knots)", " [>= 8]", " [>= 5 y < 8]", " [> 2 y < 5]", " [<= 2]"),
              lty = 1, lwd = 2, col = c(NA, 3, 5, 7, 2), bty = "n", pt.cex = 2)
       points(x = data_viaje$Lon_calas, y = data_viaje$Lat_calas, pch = 8, cex = 1.2)
-      text(x = harbor[c(13,18,23,33,46,55,62,72,85),"lon"],
-           y = harbor[c(13,18,23,33,46,55,62,72,85),"lat"],
-           labels = as.character(harbor[c(13,18,23,33,46,55,62,72,85),"harbor2"]), col = 4)
+
+      if(!is.null(file_harbor)){
+        text(x = file_harbor$lon,
+             y = file_harbor$lat,
+             labels = as.character(file_harbor$harbor), col = 4)
+      }
       title(main = paste0(data_viaje$Date[1], " - ", data_viaje$Date[length(data_viaje$Date)]))
     }
     dev.off()
