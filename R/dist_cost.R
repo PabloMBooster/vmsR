@@ -2,6 +2,7 @@ dist_cost <- function(lon, lat, polygon = vmsR::PERU_SP, area ="+proj=longlat", 
   require(sp)
   require(rgeos)
   require(vmsR)
+  require(rgdal)
 
   temp = data.frame(lon = lon, lat = lat)
   posiciones = temp[,c("lon", "lat")]
