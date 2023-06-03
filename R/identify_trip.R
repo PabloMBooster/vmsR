@@ -106,7 +106,7 @@ identify_trip <- function(data = data, dharbor = 2, rmin = 6,
     clean_viajes$mistake <- 4 # vessels that dont move
   }
 
-  clean_viajes$dist_costa <- dist_cost(lon = clean_viajes$Lon, lat = clean_viajes$Lat, polygon = vmsR::PERU_SP)
+  clean_viajes$dist_costa <- estima_dc2(lon = clean_viajes$Lon, lat = clean_viajes$Lat, polygon = vmsR::PERU_SP)
 
   clean_viajes$Cod_Viaje_VMS <- paste0(clean_viajes$Cod_Barco, "-",clean_viajes$trip)
   duracion_viaje                   <-  tapply(clean_viajes$Time, clean_viajes$Cod_Viaje_VMS, sum)
